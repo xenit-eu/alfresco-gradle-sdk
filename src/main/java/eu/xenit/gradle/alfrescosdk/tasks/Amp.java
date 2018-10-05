@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 import javax.annotation.Nullable;
 import org.gradle.api.Project;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFile;
@@ -94,10 +95,26 @@ public class Amp extends Zip {
         return web;
     }
 
+    public void setWeb(Directory web) {
+        this.web.set(web);
+    }
+
+    public void setWeb(File web) {
+        this.web.set(web);
+    }
+
     @InputDirectory
     @Optional
     public DirectoryProperty getConfig() {
-        return web;
+        return config;
+    }
+
+    public void setConfig(Directory directory) {
+        config.set(directory);
+    }
+
+    public void setConfig(File directory) {
+        config.set(directory);
     }
 
     @InputFile
