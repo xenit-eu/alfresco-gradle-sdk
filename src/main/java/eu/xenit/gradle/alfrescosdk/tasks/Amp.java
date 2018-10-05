@@ -48,13 +48,11 @@ public class Amp extends Zip {
         from(getWeb(), spec -> {
             spec.into("web");
         });
-        if(getModuleProperties().isPresent()) {
-            from(getModuleProperties(), spec -> {
-                spec.into("");
-                spec.rename((original) -> "module.properties");
-                spec.expand(getProject().getProperties());
-            });
-        }
+        from(getModuleProperties(), spec -> {
+            spec.into("");
+            spec.rename((original) -> "module.properties");
+            spec.expand(getProject().getProperties());
+        });
         doFirst(task -> configureAdditional());
     }
 
