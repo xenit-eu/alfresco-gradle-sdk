@@ -42,12 +42,6 @@ public class Amp extends Zip {
         from(getLicenses(), spec -> {
             spec.into("licenses");
         });
-        from(getConfig(), spec -> {
-            spec.into("config");
-        });
-        from(getWeb(), spec -> {
-            spec.into("web");
-        });
         from(getModuleProperties(), spec -> {
             spec.into("");
             spec.rename((original) -> "module.properties");
@@ -57,6 +51,16 @@ public class Amp extends Zip {
     }
 
     private void configureAdditional() {
+        if (getWeb().isPresent()) {
+            from(getWeb(), spec -> {
+                spec.into("web");
+            });
+        }
+        if (getConfig().isPresent()) {
+            from(getConfig(), spec -> {
+                spec.into("config");
+            });
+        }
         if(getFileMappingProperties().isPresent()) {
             from(getFileMappingProperties(), spec -> {
                 spec.into("");
