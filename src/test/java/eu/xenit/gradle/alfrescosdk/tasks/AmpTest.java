@@ -1,9 +1,9 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,12 +16,11 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import java.util.zip.ZipInputStream;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.internal.TaskInternal;
@@ -48,14 +47,9 @@ public class AmpTest {
     @Test
     public void testEmptyAmpTask() throws IOException {
         DefaultProject project = getDefaultProject();
+        project.setGroup("eu.xenit.gradle.alfrescosdk.test");
 
-        File moduleProperties = testProjectDir.newFile("m.properties");
-        OutputStream outputStream = new FileOutputStream(moduleProperties);
-        Writer writer = new OutputStreamWriter(outputStream);
-        writer.write("a=b");
-        writer.close();
-        outputStream.close();
-
+        File moduleProperties = createFile("module.properties", "a=b\nd=${project.group}\n");
 
         project.evaluate();
 
@@ -68,10 +62,26 @@ public class AmpTest {
 
         assertTrue(outputAmp.isPresent());
 
-        Set<Path> pathsInAmp = getPathsInZip(outputAmp.get()).collect(Collectors.toSet());
+        Map<String, Path> pathsInAmp = getPathsInZip(outputAmp.get()).collect(Collectors.toMap(Path::toString, p -> p));
 
-        Set<String> stringPaths = pathsInAmp.stream().map(Path::toString).collect(Collectors.toSet());
-        assertTrue(stringPaths.contains("/module.properties"));
+        assertTrue(pathsInAmp.containsKey("/module.properties"));
+
+        assertEquals( "a=b\nd=eu.xenit.gradle.alfrescosdk.test\n", readFile(pathsInAmp.get("/module.properties")));
+    }
+
+    private File createFile(String filename, String content) throws IOException {
+        File file = testProjectDir.newFile(filename);
+        OutputStream outputStream = new FileOutputStream(file);
+        Writer writer = new OutputStreamWriter(outputStream);
+        writer.write(content);
+        writer.close();
+        outputStream.close();
+        return file;
+    }
+
+    private String readFile(Path filename) throws IOException {
+        byte[] bytes = Files.readAllBytes(filename);
+        return new String(bytes);
     }
 
     private Stream<Path> getPathsInZip(File zipFile) {
