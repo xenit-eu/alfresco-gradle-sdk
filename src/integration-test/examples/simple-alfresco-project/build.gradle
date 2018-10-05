@@ -1,0 +1,4 @@
+plugins {
+    id 'eu.xenit.alfresco'
+    id 'eu.xenit.amp'
+}

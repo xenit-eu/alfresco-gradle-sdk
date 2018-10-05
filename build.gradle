@@ -9,9 +9,32 @@ group 'eu.xenit.gradle'
 
 sourceCompatibility = 1.8
 
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/java')
+        }
+
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
 dependencies {
     compile gradleApi()
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+}
+
+task integrationTest(type: Test, group: "verification") {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
 gradlePlugin {
