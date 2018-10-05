@@ -1,0 +1,42 @@
+plugins {
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.10.0"
+    id 'org.ajoberstar.reckon' version "0.8.0"
+}
+
+group 'eu.xenit.gradle'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile gradleApi()
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+gradlePlugin {
+    plugins {
+        amp {
+            id = "eu.xenit.amp"
+            implementationClass = "eu.xenit.gradle.alfrescosdk.AmpPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    vcsUrl = "https://github.com/xenit-eu/alfresco-gradle-sdk"
+    website = vcsUrl
+    description = "Gradle plugins and tasks to support Alfresco development"
+    tags = ["alfresco"]
+    plugins {
+        amp {
+            displayName = "Alfreco AMP plugin"
+        }
+    }
+}
+
+reckon {
+    scopeFromProp()
+    snapshotFromProp()
+}
+
+reckonTagCreate.dependsOn(check)
