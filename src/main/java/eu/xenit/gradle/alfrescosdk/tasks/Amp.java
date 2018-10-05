@@ -1,16 +1,13 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
-import javax.annotation.Nullable;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
+import java.util.concurrent.Callable;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.internal.file.copy.DefaultCopySpec;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
@@ -36,37 +33,56 @@ public class Amp extends Zip {
     public Amp() {
         setExtension(AMP_EXTENSION);
         setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
-        from(getLibs(), spec -> {
-            spec.into("libs");
+        DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");
+        ampCopySpec.into("lib", spec -> {
+            spec.from(new Callable<FileCollection>() {
+                public FileCollection call() {
+                    return getLibs();
+                }
+            });
         });
-        from(getLicenses(), spec -> {
-            spec.into("licenses");
+        ampCopySpec.into("licenses", spec -> {
+            spec.from(new Callable<FileCollection>() {
+                public FileCollection call() {
+                    return getLicenses();
+                }
+            });
         });
-        from(getModuleProperties(), spec -> {
-            spec.into("");
+        ampCopySpec.into("", spec -> {
+            spec.from(new Callable<RegularFile>() {
+                @Override
+                public RegularFile call() throws Exception {
+                    return getModuleProperties().get();
+                }
+            });
             spec.rename((original) -> "module.properties");
             spec.expand(getProject().getProperties());
         });
-        doFirst(task -> configureAdditional());
-    }
-
-    private void configureAdditional() {
-        if (getWeb().isPresent()) {
-            from(getWeb(), spec -> {
-                spec.into("web");
+        ampCopySpec.into("web", spec -> {
+            spec.from(new Callable<Directory>() {
+                @Override
+                public Directory call() throws Exception {
+                    return getWeb().getOrNull();
+                }
             });
-        }
-        if (getConfig().isPresent()) {
-            from(getConfig(), spec -> {
-                spec.into("config");
+        });
+        ampCopySpec.into("config", spec -> {
+            spec.from(new Callable<Directory>() {
+                @Override
+                public Directory call() throws Exception {
+                    return getConfig().getOrNull();
+                }
             });
-        }
-        if(getFileMappingProperties().isPresent()) {
-            from(getFileMappingProperties(), spec -> {
-                spec.into("");
-                spec.rename((original) -> "file-mapping.properties");
+        });
+        ampCopySpec.into("", spec -> {
+            spec.from(new Callable<RegularFile>() {
+                @Override
+                public RegularFile call() throws Exception {
+                    return getFileMappingProperties().getOrNull();
+                }
             });
-        }
+            spec.rename((original) -> "file-mapping.properties");
+        });
     }
 
     @InputFiles
