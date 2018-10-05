@@ -19,6 +19,11 @@ gradlePlugin {
             id = "eu.xenit.amp"
             implementationClass = "eu.xenit.gradle.alfrescosdk.AmpPlugin"
         }
+        
+        alfresco {
+            id = "eu.xenit.alfresco"
+            implementationClass = "eu.xenit.gradle.alfrescosdk.AlfrescoPlugin"
+        }
     }
 }
 

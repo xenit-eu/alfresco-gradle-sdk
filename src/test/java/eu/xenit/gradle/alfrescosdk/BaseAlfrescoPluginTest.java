@@ -10,7 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import static eu.xenit.gradle.alfrescosdk.BaseAlfrescoPlugin.ALFRESCO_PROVIDED;
+import static eu.xenit.gradle.alfrescosdk.AlfrescoPlugin.ALFRESCO_PROVIDED;
 import static org.junit.Assert.*;
 
 
@@ -18,7 +18,7 @@ public class BaseAlfrescoPluginTest {
 
     private DefaultProject getDefaultProject() {
         DefaultProject project = (DefaultProject) ProjectBuilder.builder().build();
-        project.getPluginManager().apply(BaseAlfrescoPlugin.class);
+        project.getPluginManager().apply(AlfrescoPlugin.class);
         return project;
     }
 
@@ -43,8 +43,13 @@ public class BaseAlfrescoPluginTest {
         File test123Jar = test123JarCollection.getSingleFile();
         project.getDependencies().add(ALFRESCO_PROVIDED, test123JarCollection);
 
-        assertTrue(project.getConfigurations().getAt("compileOnly").getDependencies().contains(test123Jar));
+        assertTrue(configurationHasFile("compileOnly", project, test123Jar));
+        assertTrue(configurationHasFile("testRuntime", project, test123Jar));
+        assertFalse(configurationHasFile("runtime", project, test123Jar));
+    }
 
+    private boolean configurationHasFile(String configurationName, DefaultProject project, File test123Jar) {
+        return project.getConfigurations().getAt(configurationName).getResolvedConfiguration().getFiles().contains(test123Jar);
     }
 
 }
