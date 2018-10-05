@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 import javax.annotation.Nullable;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
@@ -20,9 +21,9 @@ public class Amp extends Zip {
 
     public static final String AMP_EXTENSION = "amp";
 
-    private FileCollection libs;
+    private FileCollection libs = getProject().files();
 
-    private FileCollection licenses;
+    private FileCollection licenses = getProject().files();
 
     final private DirectoryProperty web = newInputDirectory();
 
@@ -34,40 +35,38 @@ public class Amp extends Zip {
 
     public Amp() {
         setExtension(AMP_EXTENSION);
-        into("libs", spec -> {
-            if (libs != null) {
-                spec.from(libs);
-            }
+        setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
+        from(getLibs(), spec -> {
+            spec.into("libs");
         });
-        into("licenses", spec -> {
-            if (licenses != null) {
-                spec.from(licenses);
-            }
+        from(getLicenses(), spec -> {
+            spec.into("licenses");
         });
-        into("config", spec -> {
-            if(config.isPresent()) {
-                spec.from(config);
-            }
+        from(getConfig(), spec -> {
+            spec.into("config");
         });
-        into("web", spec -> {
-            if(web.isPresent()) {
-                spec.from(web);
-            }
+        from(getWeb(), spec -> {
+            spec.into("web");
         });
-        into("", spec -> {
-            spec.from(moduleProperties);
-            spec.rename((original) -> "module.properties");
-            spec.expand(getProject().getProperties());
-        });
-        into("", spec -> {
-            if(fileMappingProperties.isPresent()) {
-                spec.from(fileMappingProperties);
-                spec.rename((original) -> "file-mapping.properties");
-            }
-        });
+        if(getModuleProperties().isPresent()) {
+            from(getModuleProperties(), spec -> {
+                spec.into("");
+                spec.rename((original) -> "module.properties");
+                spec.expand(getProject().getProperties());
+            });
+        }
+        doFirst(task -> configureAdditional());
     }
 
-    @Nullable
+    private void configureAdditional() {
+        if(getFileMappingProperties().isPresent()) {
+            from(getFileMappingProperties(), spec -> {
+                spec.into("");
+                spec.rename((original) -> "file-mapping.properties");
+            });
+        }
+    }
+
     @InputFiles
     @Optional
     public FileCollection getLibs() {
@@ -78,7 +77,6 @@ public class Amp extends Zip {
         this.libs = libs;
     }
 
-    @Nullable
     @InputFiles
     @Optional
     public FileCollection getLicenses() {
