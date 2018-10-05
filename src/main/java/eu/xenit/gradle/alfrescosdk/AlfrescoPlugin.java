@@ -8,6 +8,7 @@ import org.gradle.api.plugins.JavaPlugin;
 public class AlfrescoPlugin implements Plugin<Project> {
 
     public static final String ALFRESCO_PROVIDED = "alfrescoProvided";
+    public static final String PLUGIN_ID = "eu.xenit.alfresco";
 
     @Override
     public void apply(Project project) {
