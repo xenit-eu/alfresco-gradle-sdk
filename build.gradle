@@ -38,6 +38,11 @@ pluginBundle {
             displayName = "Alfreco AMP plugin"
         }
     }
+
+    mavenCoordinates {
+        groupId = "eu.xenit.gradle"
+        artifactId = "alfresco-sdk"
+    }
 }
 
 reckon {
