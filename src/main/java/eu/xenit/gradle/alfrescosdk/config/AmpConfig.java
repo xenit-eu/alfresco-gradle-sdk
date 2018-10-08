@@ -15,9 +15,24 @@ public class AmpConfig {
     private final Project project;
     public AmpConfig(Project project){
         this.project = project;
-        moduleProperties = () -> project.file("src/main/amp/module.properties", PathValidation.FILE);
-        configDir =  () -> project.file("src/main/amp/config", PathValidation.DIRECTORY);
-        webDir =  () -> project.file("src/main/amp/web", PathValidation.DIRECTORY);
+        moduleProperties = () -> new File("src/main/amp/module.properties");
+        configDir =  () -> {
+            File file = new File("src/main/amp/config");
+            if(file.exists()) {
+                return file;
+            } else {
+                return null;
+            }
+        };
+        webDir =  () -> {
+            File file = new File("src/main/amp/web");
+            if(file.exists()) {
+                return file;
+            } else {
+                return null;
+            }
+        };
+
     }
 
     public File getModuleProperties() {

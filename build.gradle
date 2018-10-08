@@ -42,6 +42,8 @@ task integrationTest(type: Test, group: "verification") {
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
+check.dependsOn(integrationTest)
+
 gradlePlugin {
     plugins {
         amp {

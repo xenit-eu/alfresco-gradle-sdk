@@ -20,13 +20,13 @@ public class Amp extends Zip {
 
     private FileCollection licenses = getProject().files();
 
-    private Supplier<File> web = () -> null;
+    private Supplier<File> web;
 
-    private Supplier<File> config = () -> null;
+    private Supplier<File> config;
 
-    private Supplier<File> moduleProperties = () -> null;
+    private Supplier<File> moduleProperties;
 
-    private Supplier<File> fileMappingProperties = () -> null;
+    private Supplier<File> fileMappingProperties;
 
     public Amp() {
         setExtension(AMP_EXTENSION);
@@ -106,6 +106,9 @@ public class Amp extends Zip {
     @InputDirectory
     @Optional
     public File getWeb() {
+        if(this.web == null){
+            return null;
+        }
         return web.get();
     }
 
@@ -116,6 +119,9 @@ public class Amp extends Zip {
     @InputDirectory
     @Optional
     public File getConfig() {
+        if(this.config == null){
+            return null;
+        }
         return config.get();
     }
 
@@ -125,6 +131,9 @@ public class Amp extends Zip {
 
     @InputFile
     public File getModuleProperties() {
+        if(this.moduleProperties == null){
+            return null;
+        }
         return moduleProperties.get();
     }
 
@@ -135,7 +144,10 @@ public class Amp extends Zip {
     @InputFile
     @Optional
     public File getFileMappingProperties() {
-        return fileMappingProperties.get();
+        if(this.fileMappingProperties == null){
+            return null;
+        }
+        return this.fileMappingProperties.get();
     }
 
     public void setFileMappingProperties(File fileMappingProperties) {

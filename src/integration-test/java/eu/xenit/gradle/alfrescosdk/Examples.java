@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class Examples extends AbstractIntegrationTest {
 
-    private static Path EXAMPLES = Paths.get("src", "integration-test", "examples");
+    private static Path EXAMPLES = Paths.get("src", "integration-test", "resources", "examples");
 
     @Test
     public void testSimpleAlfrescoProject() throws IOException {
