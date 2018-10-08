@@ -63,7 +63,10 @@ pluginBundle {
     tags = ["alfresco"]
     plugins {
         amp {
-            displayName = "Alfreco AMP plugin"
+            displayName = "Alfresco AMP plugin"
+        }
+        alfresco {
+            displayName = "Alfresco dependency management plugin"
         }
     }
 
