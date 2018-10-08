@@ -16,7 +16,7 @@ public class AlfrescoPlugin implements Plugin<Project> {
         Configuration alfrescoProvided = project.getConfigurations().create(ALFRESCO_PROVIDED);
         Configuration compileOnly = project.getConfigurations().getByName("compileOnly");
         compileOnly.extendsFrom(alfrescoProvided);
-        Configuration testRuntime = project.getConfigurations().getByName("testRuntime");
+        Configuration testRuntime = project.getConfigurations().getByName("testImplementation");
         testRuntime.extendsFrom(alfrescoProvided);
     }
 }

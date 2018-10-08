@@ -44,7 +44,8 @@ public class BaseAlfrescoPluginTest {
         project.getDependencies().add(ALFRESCO_PROVIDED, test123JarCollection);
 
         assertTrue(configurationHasFile("compileOnly", project, test123Jar));
-        assertTrue(configurationHasFile("testRuntime", project, test123Jar));
+        assertTrue(configurationHasFile("testRuntimeClasspath", project, test123Jar));
+        assertTrue(configurationHasFile("testCompileClasspath", project, test123Jar));
         assertFalse(configurationHasFile("runtime", project, test123Jar));
     }
 

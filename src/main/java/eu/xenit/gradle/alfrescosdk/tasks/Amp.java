@@ -1,12 +1,10 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
+import groovy.lang.Closure;
 import java.io.File;
 import java.util.concurrent.Callable;
-import org.gradle.api.file.Directory;
-import org.gradle.api.file.DirectoryProperty;
+import java.util.function.Supplier;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.file.RegularFile;
-import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.internal.file.copy.DefaultCopySpec;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
@@ -22,13 +20,13 @@ public class Amp extends Zip {
 
     private FileCollection licenses = getProject().files();
 
-    final private DirectoryProperty web = newInputDirectory();
+    private Supplier<File> web = () -> null;
 
-    final private DirectoryProperty config = newInputDirectory();
+    private Supplier<File> config = () -> null;
 
-    final private RegularFileProperty moduleProperties = newInputFile();
+    private Supplier<File> moduleProperties = () -> null;
 
-    final private RegularFileProperty fileMappingProperties = newInputFile();
+    private Supplier<File> fileMappingProperties = () -> null;
 
     public Amp() {
         setExtension(AMP_EXTENSION);
@@ -49,36 +47,36 @@ public class Amp extends Zip {
             });
         });
         ampCopySpec.into("", spec -> {
-            spec.from(new Callable<RegularFile>() {
+            spec.from(new Callable<File>() {
                 @Override
-                public RegularFile call() throws Exception {
-                    return getModuleProperties().get();
+                public File call() {
+                    return getModuleProperties();
                 }
             });
             spec.rename((original) -> "module.properties");
             spec.expand(getProject().getProperties());
         });
         ampCopySpec.into("web", spec -> {
-            spec.from(new Callable<Directory>() {
+            spec.from(new Callable<File>() {
                 @Override
-                public Directory call() throws Exception {
-                    return getWeb().getOrNull();
+                public File call() throws Exception {
+                    return getWeb();
                 }
             });
         });
         ampCopySpec.into("config", spec -> {
-            spec.from(new Callable<Directory>() {
+            spec.from(new Callable<File>() {
                 @Override
-                public Directory call() throws Exception {
-                    return getConfig().getOrNull();
+                public File call() {
+                    return getConfig();
                 }
             });
         });
         ampCopySpec.into("", spec -> {
-            spec.from(new Callable<RegularFile>() {
+            spec.from(new Callable<File>() {
                 @Override
-                public RegularFile call() throws Exception {
-                    return getFileMappingProperties().getOrNull();
+                public File call() {
+                    return getFileMappingProperties();
                 }
             });
             spec.rename((original) -> "file-mapping.properties");
@@ -107,57 +105,75 @@ public class Amp extends Zip {
 
     @InputDirectory
     @Optional
-    public DirectoryProperty getWeb() {
-        return web;
-    }
-
-    public void setWeb(Directory web) {
-        this.web.set(web);
+    public File getWeb() {
+        return web.get();
     }
 
     public void setWeb(File web) {
-        this.web.set(web);
+        this.web = () -> web;
     }
 
     @InputDirectory
     @Optional
-    public DirectoryProperty getConfig() {
-        return config;
-    }
-
-    public void setConfig(Directory directory) {
-        config.set(directory);
+    public File getConfig() {
+        return config.get();
     }
 
     public void setConfig(File directory) {
-        config.set(directory);
+        this.config = () -> directory;
     }
 
     @InputFile
-    public RegularFileProperty getModuleProperties() {
-        return moduleProperties;
-    }
-
-    public void setModuleProperties(RegularFile moduleProperties) {
-        this.moduleProperties.set(moduleProperties);
+    public File getModuleProperties() {
+        return moduleProperties.get();
     }
 
     public void setModuleProperties(File moduleProperties) {
-        this.moduleProperties.set(moduleProperties);
+        this.moduleProperties = () -> moduleProperties;
     }
 
     @InputFile
     @Optional
-    public RegularFileProperty getFileMappingProperties() {
-        return fileMappingProperties;
-    }
-
-    public void setFileMappingProperties(RegularFile fileMappingProperties) {
-        this.fileMappingProperties.set(fileMappingProperties);
+    public File getFileMappingProperties() {
+        return fileMappingProperties.get();
     }
 
     public void setFileMappingProperties(File fileMappingProperties) {
-        this.fileMappingProperties.set(fileMappingProperties);
+        this.fileMappingProperties = () -> fileMappingProperties;
+    }
+
+    public void setWeb(Supplier<File> web) {
+        this.web = web;
+    }
+
+    public void setConfig(Supplier<File> config) {
+        this.config = config;
+    }
+
+    public void setModuleProperties(Supplier<File> moduleProperties) {
+        this.moduleProperties = moduleProperties;
+    }
+
+    public void setFileMappingProperties(Supplier<File> fileMappingProperties) {
+        this.fileMappingProperties = fileMappingProperties;
+    }
+
+    //Groovy closure support
+
+    public void setWeb(Closure<File> web) {
+        this.web = () -> web.call();
+    }
+
+    public void setConfig(Closure<File> config) {
+        this.config = () -> config.call();
+    }
+
+    public void setModuleProperties(Closure<File> moduleProperties) {
+        this.moduleProperties = () -> moduleProperties.call();
+    }
+
+    public void setFileMappingProperties(Closure<File> fileMappingProperties) {
+        this.fileMappingProperties = () -> fileMappingProperties.call();
     }
 
 }
