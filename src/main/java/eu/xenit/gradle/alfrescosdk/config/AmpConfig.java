@@ -7,6 +7,9 @@ import org.gradle.api.Project;
 
 public class AmpConfig {
 
+    public static final String DEFAULT_CONFIG_DIR = "src/main/amp/config";
+    public static final String DEFAULT_MODULE_PROPERTIES = "src/main/amp/module.properties";
+    public static final String DEFAULT_WEB_DIR = "src/main/amp/web";
     private Supplier<File> moduleProperties;
     private Supplier<File> configDir;
     private Supplier<File> webDir;
@@ -15,9 +18,9 @@ public class AmpConfig {
     private final Project project;
     public AmpConfig(Project project){
         this.project = project;
-        moduleProperties = () -> new File("src/main/amp/module.properties");
+        moduleProperties = () -> project.file(DEFAULT_MODULE_PROPERTIES);
         configDir =  () -> {
-            File file = new File("src/main/amp/config");
+            File file = project.file(DEFAULT_CONFIG_DIR);
             if(file.exists()) {
                 return file;
             } else {
@@ -25,7 +28,7 @@ public class AmpConfig {
             }
         };
         webDir =  () -> {
-            File file = new File("src/main/amp/web");
+            File file = project.file(DEFAULT_WEB_DIR);
             if(file.exists()) {
                 return file;
             } else {

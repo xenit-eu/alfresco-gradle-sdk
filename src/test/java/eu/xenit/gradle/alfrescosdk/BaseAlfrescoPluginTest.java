@@ -6,9 +6,7 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.internal.plugins.PluginManagerInternal.PluginWithId;
 import org.gradle.api.internal.project.DefaultProject;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static eu.xenit.gradle.alfrescosdk.AlfrescoPlugin.ALFRESCO_PROVIDED;
 import static org.junit.Assert.*;
@@ -21,9 +19,6 @@ public class BaseAlfrescoPluginTest {
         project.getPluginManager().apply(AlfrescoPlugin.class);
         return project;
     }
-
-    @Rule
-    public final TemporaryFolder testProjectFolder = new TemporaryFolder();
 
     @Test
     public void testJavaPluginApplied(){
