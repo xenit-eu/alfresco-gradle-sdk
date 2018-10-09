@@ -11,10 +11,9 @@ ext.alfrescoVersion = "5.2.g"
 repositories {
     mavenCentral()
     jcenter()
-    maven {
-        url "https://artifacts.alfresco.com/nexus/content/groups/public/"
-    }
+    alfrescoPublic()
 }
+
 
 dependencies {
     alfrescoProvided "org.alfresco:alfresco-repository:${alfrescoVersion}"
