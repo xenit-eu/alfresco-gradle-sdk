@@ -11,7 +11,7 @@ in this project.
 
 ```
 plugins {
-    id 'eu.xenit.alfresco' version "0.1.3"
+    id 'eu.xenit.alfresco' version "0.1.3" // Have a look at https://plugins.gradle.org/plugin/eu.xenit.alfresco for the latest version
     id 'eu.xenit.amp' version "0.1.3"
 }
 ```
