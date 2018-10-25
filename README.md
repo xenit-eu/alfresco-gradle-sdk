@@ -27,11 +27,18 @@ unit tests.
 An amp has some typical files and folders. The module.properties file is required.
 You can override their locations in the ```ampConfig``` extension:
 
-| property         | description                                                     | default location               | required |
-|------------------|-----------------------------------------------------------------|--------------------------------|----------|
-| moduleProperties | The file that describes your extension.                         | src/main/amp/module.properties | false    |
-| configDir        | This folder will be put on the classpath of the war.            | src/main/amp/config            | false    |
-| web              | This folder will end up in the "web" directory of the amp file. | src/main/amp/web               | false    |
+| property         | description                                                  | default                                              | required |
+| ---------------- | ------------------------------------------------------------ | ---------------------------------------------------- | -------- |
+| moduleProperties | The file that describes your extension.                      | ```project.file('src/main/amp/module.properties')``` | false    |
+| configDir        | This folder will be put on the classpath of the war.         | ```project.file('src/main/amp/config')```            | false    |
+| web              | This folder will end up in the "web" directory of the amp file. | ```project.file('src/main/amp/web')```               | false    |
+| dynamicExtension | Jar and dependencies are treated as Dynamic Extensions.      | false                                                | false    |
+
+More information about Dynamic Extensions for Alfresco can be found
+[here](https://github.com/xenit-eu/dynamic-extensions-for-alfresco).
+This plugin can bundle Dynamic Extensions in an ```amp``` file. This means
+that the jar and dependencies should be put in the correct location in
+the ```amp``` file.
 
 ## Usage
 
