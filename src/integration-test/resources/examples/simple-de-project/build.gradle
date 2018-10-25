@@ -11,6 +11,10 @@ plugins {
 
 apply plugin: 'alfresco-dynamic-extension'
 
+ampConfig {
+    dynamicExtensionAmp = true
+}
+
 description = "HelloWorld Webscript, very useful"
 version = "0.0.1"
 
@@ -22,11 +26,6 @@ repositories {
     alfrescoPublic()
 }
 
-amp {
-    de {
-        from project.jar
-    }
-}
 dependencies {
     alfrescoProvided "org.alfresco:alfresco-repository:${alfrescoVersion}"
 }

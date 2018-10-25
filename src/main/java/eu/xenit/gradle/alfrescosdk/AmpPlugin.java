@@ -4,6 +4,7 @@ import eu.xenit.gradle.alfrescosdk.config.AmpConfig;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.FileCollection;
 
 public class AmpPlugin implements Plugin<Project> {
@@ -29,8 +30,17 @@ public class AmpPlugin implements Plugin<Project> {
         project.getPluginManager().withPlugin(AlfrescoPlugin.PLUGIN_ID, appliedPlugin -> {
             FileCollection runtime = project.getConfigurations().getAt("runtime");
             FileCollection jarArtifact = project.getTasks().getAt("jar").getOutputs().getFiles();
-            FileCollection libs = runtime.plus(jarArtifact);
-            amp.setLibs(libs);
+            FileCollection jars = runtime.plus(jarArtifact);
+            amp.setLibs(jars);
+            project.afterEvaluate(p -> {
+                if (ampConfig.getDynamicExtensionAmp()) {
+                    amp.de((CopySpec c) -> c.from(jars));
+                    // Reset libs only when they have not been changed directly in the task
+                    if(amp.getLibs() == jars) {
+                        amp.setLibs(null);
+                    }
+                }
+            });
         });
     }
 }

@@ -34,4 +34,26 @@ public class AmpPluginTest {
         assertTrue(ampTask.getConfig().isDirectory());
     }
 
+    @Test
+    public void testDeProjectWithEmptyLib(){
+        DefaultProject project = getDefaultProject();
+        project.getPluginManager().apply(AlfrescoPlugin.class);
+        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> ampConfig.setDynamicExtensionAmp(true));
+
+        Amp ampTask = (Amp) project.getTasks().getByName("amp");
+        project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should clear the libs
+        assertNull(ampTask.getLibs());
+    }
+
+    @Test
+    public void testDeProjectWithConfiguredLib(){
+        DefaultProject project = getDefaultProject();
+        project.getPluginManager().apply(AlfrescoPlugin.class);
+        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> ampConfig.setDynamicExtensionAmp(true));
+
+        Amp ampTask = (Amp) project.getTasks().getByName("amp");
+        ampTask.setLibs(project.files("this/doesnt/exist"));
+        project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should leave the libs alone
+        assertNotNull(ampTask.getLibs());
+    }
 }
