@@ -12,7 +12,7 @@ plugins {
 apply plugin: 'alfresco-dynamic-extension'
 
 ampConfig {
-    dynamicExtensionAmp = true
+    dynamicExtension = true
 }
 
 description = "HelloWorld Webscript, very useful"
