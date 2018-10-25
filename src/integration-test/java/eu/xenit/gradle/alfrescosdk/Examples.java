@@ -14,4 +14,8 @@ public class Examples extends AbstractIntegrationTest {
         testProjectFolder(EXAMPLES.resolve("simple-alfresco-project"));
     }
 
+    @Test
+    public void testSimpleDeProject() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("simple-de-project"));
+    }
 }

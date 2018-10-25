@@ -1,0 +1,31 @@
+buildscript {
+    dependencies {
+        classpath "eu.xenit.de:gradle-plugin:1.7.6"
+    }
+}
+
+plugins {
+    id 'eu.xenit.alfresco'
+    id 'eu.xenit.amp'
+}
+
+apply plugin: 'alfresco-dynamic-extension'
+
+ampConfig {
+    dynamicExtensionAmp = true
+}
+
+description = "HelloWorld Webscript, very useful"
+version = "0.0.1"
+
+ext.alfrescoVersion = "5.2.g"
+
+repositories {
+    mavenCentral()
+    jcenter()
+    alfrescoPublic()
+}
+
+dependencies {
+    alfrescoProvided "org.alfresco:alfresco-repository:${alfrescoVersion}"
+}
