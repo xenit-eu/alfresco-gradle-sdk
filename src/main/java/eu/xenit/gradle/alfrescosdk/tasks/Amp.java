@@ -4,13 +4,17 @@ import groovy.lang.Closure;
 import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+import org.gradle.api.Action;
+import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.copy.DefaultCopySpec;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.bundling.Zip;
+import org.gradle.util.ConfigureUtil;
 
 public class Amp extends Zip {
 
@@ -28,10 +32,12 @@ public class Amp extends Zip {
 
     private Supplier<File> fileMappingProperties;
 
+    private DefaultCopySpec ampCopySpec;
+
     public Amp() {
         setExtension(AMP_EXTENSION);
         setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
-        DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");
+        ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");
         ampCopySpec.into("lib", spec -> {
             spec.from(new Callable<FileCollection>() {
                 public FileCollection call() {
@@ -83,6 +89,11 @@ public class Amp extends Zip {
         });
     }
 
+    @Internal
+    public CopySpec getDeCopySpec() {
+        return ampCopySpec.addChild().into("config/dynamic-extensions/bundles");
+    }
+
     @InputFiles
     @Optional
     public FileCollection getLibs() {
@@ -101,6 +112,16 @@ public class Amp extends Zip {
 
     public void setLicenses(FileCollection licenses) {
         this.licenses = licenses;
+    }
+
+    public CopySpec de(Closure configureClosure) {
+        return ConfigureUtil.configure(configureClosure, getDeCopySpec());
+    }
+
+    public CopySpec de(Action<? super CopySpec> configureAction) {
+        CopySpec amp = getDeCopySpec();
+        configureAction.execute(amp);
+        return amp;
     }
 
     @InputDirectory
