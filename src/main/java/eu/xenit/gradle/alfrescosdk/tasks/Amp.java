@@ -93,10 +93,7 @@ public class Amp extends Zip {
 
     @Internal
     private CopySpec getDe() {
-        if (deCopySpec == null) {
-            deCopySpec = ampCopySpec.addChild().into("config/dynamic-extensions/bundles");
-        }
-        return deCopySpec;
+        return ampCopySpec.addChild().into("config/dynamic-extensions/bundles");
     }
 
     @InputFiles
