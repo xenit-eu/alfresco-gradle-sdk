@@ -34,6 +34,8 @@ public class Amp extends Zip {
 
     private DefaultCopySpec ampCopySpec;
 
+    private CopySpec deCopySpec;
+
     public Amp() {
         setExtension(AMP_EXTENSION);
         setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
@@ -90,8 +92,11 @@ public class Amp extends Zip {
     }
 
     @Internal
-    public CopySpec getDeCopySpec() {
-        return ampCopySpec.addChild().into("config/dynamic-extensions/bundles");
+    private CopySpec getDe() {
+        if (deCopySpec == null) {
+            deCopySpec = ampCopySpec.addChild().into("config/dynamic-extensions/bundles");
+        }
+        return deCopySpec;
     }
 
     @InputFiles
@@ -114,14 +119,12 @@ public class Amp extends Zip {
         this.licenses = licenses;
     }
 
-    public CopySpec de(Closure configureClosure) {
-        return ConfigureUtil.configure(configureClosure, getDeCopySpec());
+    public void de(Closure configureClosure) {
+        ConfigureUtil.configure(configureClosure, getDe());
     }
 
-    public CopySpec de(Action<? super CopySpec> configureAction) {
-        CopySpec amp = getDeCopySpec();
-        configureAction.execute(amp);
-        return amp;
+    public void de(Action<? super CopySpec> configureAction) {
+        configureAction.execute(getDe());
     }
 
     @InputDirectory
