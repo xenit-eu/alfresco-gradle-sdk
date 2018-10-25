@@ -34,8 +34,6 @@ public class Amp extends Zip {
 
     private DefaultCopySpec ampCopySpec;
 
-    private CopySpec deCopySpec;
-
     public Amp() {
         setExtension(AMP_EXTENSION);
         setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
