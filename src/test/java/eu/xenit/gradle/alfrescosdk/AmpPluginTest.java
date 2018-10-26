@@ -38,7 +38,7 @@ public class AmpPluginTest {
     public void testDeProjectWithEmptyLib(){
         DefaultProject project = getDefaultProject();
         project.getPluginManager().apply(AlfrescoPlugin.class);
-        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> ampConfig.setDynamicExtensionAmp(true));
+        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> ampConfig.setDynamicExtension(true));
 
         Amp ampTask = (Amp) project.getTasks().getByName("amp");
         project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should clear the libs
@@ -49,7 +49,7 @@ public class AmpPluginTest {
     public void testDeProjectWithConfiguredLib(){
         DefaultProject project = getDefaultProject();
         project.getPluginManager().apply(AlfrescoPlugin.class);
-        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> ampConfig.setDynamicExtensionAmp(true));
+        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> ampConfig.setDynamicExtension(true));
 
         Amp ampTask = (Amp) project.getTasks().getByName("amp");
         ampTask.setLibs(project.files("this/doesnt/exist"));

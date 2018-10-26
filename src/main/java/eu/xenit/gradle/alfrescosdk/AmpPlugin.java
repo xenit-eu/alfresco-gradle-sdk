@@ -33,7 +33,7 @@ public class AmpPlugin implements Plugin<Project> {
             FileCollection jars = runtime.plus(jarArtifact);
             amp.setLibs(jars);
             project.afterEvaluate(p -> {
-                if (ampConfig.getDynamicExtensionAmp()) {
+                if (ampConfig.getDynamicExtension()) {
                     amp.de((CopySpec c) -> c.from(jars));
                     // Reset libs only when they have not been changed directly in the task
                     if(amp.getLibs() == jars) {

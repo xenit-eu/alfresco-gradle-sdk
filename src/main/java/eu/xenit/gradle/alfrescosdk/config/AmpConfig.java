@@ -13,7 +13,7 @@ public class AmpConfig {
     private Supplier<File> configDir;
     private Supplier<File> webDir;
     private Supplier<File> fileMappingProperties;
-    private boolean dynamicExtensionAmp = false;
+    private boolean dynamicExtension = false;
 
     private final Project project;
     public AmpConfig(Project project){
@@ -105,11 +105,11 @@ public class AmpConfig {
         return this.fileMappingProperties;
     }
 
-    public boolean getDynamicExtensionAmp() {
-        return this.dynamicExtensionAmp;
+    public boolean getDynamicExtension() {
+        return this.dynamicExtension;
     }
 
-    public void setDynamicExtensionAmp(boolean dynamicExtensionAmp) {
-        this.dynamicExtensionAmp = dynamicExtensionAmp;
+    public void setDynamicExtension(boolean dynamicExtension) {
+        this.dynamicExtension = dynamicExtension;
     }
 }
