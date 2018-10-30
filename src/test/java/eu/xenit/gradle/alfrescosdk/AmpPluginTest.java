@@ -56,4 +56,17 @@ public class AmpPluginTest {
         project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should leave the libs alone
         assertNotNull(ampTask.getLibs());
     }
+    @Test
+    public void testProjectWithConfiguredConfigDir(){
+        DefaultProject project = getDefaultProject();
+        project.getPluginManager().apply(AlfrescoPlugin.class);
+        File need_this = new File("Need this");
+        project.getExtensions().configure("ampConfig", (AmpConfig ampConfig) -> {
+            ampConfig.setConfigDir(need_this);
+        });
+        Amp ampTask = (Amp) project.getTasks().getByName("amp");
+        project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should leave the libs alone
+        assertEquals(need_this,ampTask.getConfig()); ;
+    }
+
 }

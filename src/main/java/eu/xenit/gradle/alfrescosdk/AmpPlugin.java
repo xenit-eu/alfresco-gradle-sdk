@@ -22,10 +22,10 @@ public class AmpPlugin implements Plugin<Project> {
         project.getConfigurations().create(AMP_CONFIGURATION);
         project.getArtifacts().add(AMP_CONFIGURATION, amp);
 
-        amp.setModuleProperties(ampConfig.getModulePropertiesSupplier());
-        amp.setConfig(ampConfig.getConfigDirSupplier());
-        amp.setWeb(ampConfig.getWebDirSupplier());
-        amp.setFileMappingProperties(ampConfig.getFileMappingPropertiesSupplier());
+        amp.setModuleProperties(ampConfig::getModuleProperties);
+        amp.setConfig(ampConfig::getConfigDir);
+        amp.setWeb(ampConfig::getWebDir);
+        amp.setFileMappingProperties(ampConfig::getFileMappingProperties);
 
         project.getPluginManager().withPlugin(AlfrescoPlugin.PLUGIN_ID, appliedPlugin -> {
             FileCollection runtime = project.getConfigurations().getAt("runtime");
