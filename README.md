@@ -1,4 +1,4 @@
-# Alfresco Gradle SDK
+# Alfresco Gradle SDK [![Build Status](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk.svg?branch=master)](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk)
 
 Gradle plugins and tasks to support Alfresco development
 
