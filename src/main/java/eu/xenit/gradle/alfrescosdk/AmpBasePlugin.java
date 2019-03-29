@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.file.SourceDirectorySetFactory;
@@ -25,7 +26,6 @@ public class AmpBasePlugin implements Plugin<Project> {
 
     private final SourceDirectorySetFactory sourceDirectorySetFactory;
     private Project project;
-    private final Set<AmpSourceSet> ampSourceSets = new HashSet<>();
 
     @Inject
     public AmpBasePlugin(SourceDirectorySetFactory sourceDirectorySetFactory) {
@@ -70,7 +70,6 @@ public class AmpBasePlugin implements Plugin<Project> {
 
             createWritePropertiesTask(ampSourceSet.getModulePropertiesTaskName(), "module.properties", ampSourceSet.getAmp().getModuleProperties());
             createWritePropertiesTask(ampSourceSet.getFileMappingPropertiesTaskName(), "file-mapping.properties", ampSourceSet.getAmp().getFileMappingProperties());
-            ampSourceSets.add(ampSourceSet);
         });
     }
 
@@ -81,7 +80,12 @@ public class AmpBasePlugin implements Plugin<Project> {
         });
     }
 
-    public Set<AmpSourceSet> getAmpSourceSets() {
-        return Collections.unmodifiableSet(ampSourceSets);
+    public void configureAmpSourceSets(Action<? super AmpSourceSet> configure) {
+        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet ->  {
+            AmpSourceSet ampSourceSet = new DslObject(sourceSet).getConvention().findPlugin(AmpSourceSet.class);
+            if(ampSourceSet != null) {
+                configure.execute(ampSourceSet);
+            }
+        });
     }
 }

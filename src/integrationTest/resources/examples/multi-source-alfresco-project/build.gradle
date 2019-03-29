@@ -20,8 +20,6 @@ sourceSets {
 description = "HelloWorld Webscript, very useful"
 version = "0.0.1"
 
-ext.alfrescoVersion = "5.2.g"
-
 repositories {
     mavenCentral()
     jcenter()
@@ -30,7 +28,7 @@ repositories {
 
 
 dependencies {
-    alfrescoProvided "org.alfresco:alfresco-repository:${alfrescoVersion}"
-    shareAlfrescoProvided "org.alfresco:share:${alfrescoVersion}"
+    alfrescoProvided "org.alfresco:alfresco-repository:5.2.g"
+    shareAlfrescoProvided "org.alfresco:share:5.2.f:classes"
 }
 

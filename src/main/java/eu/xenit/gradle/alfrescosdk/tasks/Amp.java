@@ -19,6 +19,7 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.bundling.Zip;
+import org.gradle.jvm.tasks.Jar;
 import org.gradle.util.ConfigureUtil;
 
 public class Amp extends Zip {
@@ -27,6 +28,8 @@ public class Amp extends Zip {
     public static final String AMP_EXTENSION = "amp";
 
     private FileCollection libs = getProject().files();
+
+    private Jar jar;
 
     private FileCollection licenses = getProject().files();
 
@@ -52,6 +55,11 @@ public class Amp extends Zip {
                 public FileCollection call() {
                     return getLibs();
                 }
+            });
+        });
+        ampCopySpec.into("lib", spec -> {
+            spec.from(new Callable<Jar>() {
+                public Jar call() { return jar; }
             });
         });
         ampCopySpec.into("licenses", spec -> {
@@ -156,6 +164,10 @@ public class Amp extends Zip {
         this.fileMappingProperties = fileMappingProperties;
     }
     //</editor-fold>
+
+    public void setJar(Jar jar) {
+        this.jar = jar;
+    }
 
     public void web(Action<? super CopySpec> copySpec) {
         ampCopySpec.into("web", copySpec);
