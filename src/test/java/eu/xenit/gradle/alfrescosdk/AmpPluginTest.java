@@ -27,7 +27,7 @@ public class AmpPluginTest {
     public void testConfigDirectoryExists(){
         DefaultProject defaultProject = getDefaultProject();
 
-        File configDir = new File(defaultProject.getProjectDir().getAbsolutePath()+"/"+AmpConfig.DEFAULT_CONFIG_DIR);
+        File configDir = new File(defaultProject.getProjectDir().getAbsolutePath()+"/src/main/amp/config");
         assertTrue(configDir.mkdirs());
 
         Amp ampTask = (Amp) defaultProject.getTasks().getByName("amp");

@@ -177,8 +177,16 @@ public class Amp extends Zip {
         this.web = web;
     }
 
+    public void web(Action<? super CopySpec> copySpec) {
+        ampCopySpec.into("web", copySpec);
+    }
+
     public void setConfig(Supplier<File> config) {
         this.config = config;
+    }
+
+    public void config(Action<? super CopySpec> copySpec) {
+        ampCopySpec.into("", copySpec);
     }
 
     public void setModuleProperties(Supplier<File> moduleProperties) {

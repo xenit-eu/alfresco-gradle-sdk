@@ -14,6 +14,7 @@ public class AmpConfig {
     private Supplier<File> webDirSupplier;
     private Supplier<File> fileMappingPropertiesSupplier;
     private boolean dynamicExtension = false;
+    private boolean configTouched = false;
 
     private final Project project;
 
@@ -47,6 +48,7 @@ public class AmpConfig {
     }
 
     public void setModuleProperties(File moduleProperties) {
+        configTouched = true;
         this.modulePropertiesSupplier = () -> moduleProperties;
     }
 
@@ -55,6 +57,7 @@ public class AmpConfig {
     }
 
     public void setConfigDir(File configDir) {
+        configTouched = true;
         this.configDirSupplier = () -> configDir;
     }
 
@@ -63,6 +66,7 @@ public class AmpConfig {
     }
 
     public void setWebDir(File webDir) {
+        configTouched = true;
         this.webDirSupplier = () -> webDir;
     }
 
@@ -71,18 +75,22 @@ public class AmpConfig {
     }
 
     public void setModuleProperties(Supplier<File> moduleProperties) {
+        configTouched = true;
         this.modulePropertiesSupplier = moduleProperties;
     }
 
     public void setConfigDir(Supplier<File> configDir) {
+        configTouched = true;
         this.configDirSupplier = configDir;
     }
 
     public void setWebDir(Supplier<File> webDir) {
+        configTouched = true;
         this.webDirSupplier = webDir;
     }
 
     public void setFileMappingProperties(Supplier<File> fileMappingProperties) {
+        configTouched = true;
         this.fileMappingPropertiesSupplier = fileMappingProperties;
     }
 
@@ -91,6 +99,7 @@ public class AmpConfig {
     }
 
     public void setFileMappingProperties(File fileMappingProperties) {
+        configTouched = true;
         this.fileMappingPropertiesSupplier = () -> fileMappingProperties;
     }
 
@@ -99,6 +108,11 @@ public class AmpConfig {
     }
 
     public void setDynamicExtension(boolean dynamicExtension) {
+        configTouched = true;
         this.dynamicExtension = dynamicExtension;
+    }
+
+    public boolean isConfigTouched() {
+        return configTouched;
     }
 }
