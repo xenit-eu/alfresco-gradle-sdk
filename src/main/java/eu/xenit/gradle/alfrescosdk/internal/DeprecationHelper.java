@@ -5,6 +5,7 @@ import java.util.Set;
 import org.gradle.api.logging.Logger;
 
 public final class DeprecationHelper {
+    private static final boolean enableDeprecations = Boolean.parseBoolean(System.getProperty("eu.xenit.gradle.alfrescosdk.deprecation", "true"));
     private DeprecationHelper() {
 
     }
@@ -22,6 +23,9 @@ public final class DeprecationHelper {
     private static final Set<Logger> warnedLoggers =  new HashSet<>();
 
     public static void warnDeprecation(Logger logger, String message, int skipStack) {
+        if(!enableDeprecations) {
+            return;
+        }
         String fullMessage = message;
         if(logger.isInfoEnabled()) {
             fullMessage +="\n"+getStackTrace(skipStack + 1);

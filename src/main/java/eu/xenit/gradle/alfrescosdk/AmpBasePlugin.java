@@ -18,6 +18,7 @@ import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.WriteProperties;
 
 public class AmpBasePlugin implements Plugin<Project> {
@@ -48,6 +49,10 @@ public class AmpBasePlugin implements Plugin<Project> {
 
     private void configureSourceSetDefaults() {
         project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
+            if(sourceSet.getName().equals(SourceSet.TEST_SOURCE_SET_NAME) || sourceSet.getName().endsWith("Test")) {
+                // Do not apply this configuration for tests
+                return;
+            }
             DefaultAmpSourceSet ampSourceSet = new DefaultAmpSourceSet(sourceSet, project, sourceDirectorySetFactory);
             new DslObject(sourceSet).getConvention().getPlugins().put("amp", ampSourceSet);
 

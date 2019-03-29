@@ -41,11 +41,19 @@ public class AmpPlugin implements Plugin<Project> {
                         copySpec.from(ampSourceSet.getAmp().getConfig());
                     });
                     amp.setLibs(project.getConfigurations().getByName(ampSourceSet.getAmpLibrariesConfigurationName()));
-                    amp.dependsOn(ampSourceSet.getFileMappingPropertiesTaskName(), ampSourceSet.getModulePropertiesTaskName());
+                    amp.dependsOn(
+                            ampSourceSet.getJarTaskName(),
+                            ampSourceSet.getFileMappingPropertiesTaskName(),
+                            ampSourceSet.getModulePropertiesTaskName()
+                    );
                 });
-
                 project.getConfigurations().register(ampSourceSet.getAmpConfigurationName());
                 project.getArtifacts().add(ampSourceSet.getAmpConfigurationName(), ampTask);
+
+                project.getTasks().named("assemble").configure(assemble -> {
+                    assemble.dependsOn(ampTask);
+                });
+
                 project.getPlugins().withType(IdeaPlugin.class, ideaPlugin -> {
                     ideaPlugin.getModel().getModule().getResourceDirs().addAll(ampSourceSet.getAmp().getConfig().getSrcDirs());
                 });

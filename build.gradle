@@ -20,6 +20,9 @@ sourceSets {
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
         }
+        resources {
+            srcDirs = []
+        }
     }
 }
 
@@ -37,6 +40,7 @@ dependencies {
 task integrationTest(type: Test, group: "verification") {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
+    systemProperty("eu.xenit.gradle.alfrescosdk.deprecation", "false")
 }
 
 check.dependsOn(integrationTest)

@@ -47,6 +47,11 @@ public class DefaultAmpSourceSet implements AmpSourceSet {
     }
 
     @Override
+    public String getJarTaskName() {
+        return parentSourceSet.getJarTaskName();
+    }
+
+    @Override
     public String getName() {
         return parentSourceSet.getName();
     }

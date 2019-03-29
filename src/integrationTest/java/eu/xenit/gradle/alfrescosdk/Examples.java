@@ -98,4 +98,9 @@ public class Examples extends AbstractIntegrationTest {
 
 
     }
+
+    @Test
+    public void multiSourceAlfrescoProject() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("multi-source-alfresco-project"), ":assemble");
+    }
 }

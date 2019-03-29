@@ -24,4 +24,5 @@ public interface AmpSourceSet extends Named {
     String getAmpTaskName();
     String getAmpConfigurationName();
     String getAmpLibrariesConfigurationName();
+    String getJarTaskName();
 }

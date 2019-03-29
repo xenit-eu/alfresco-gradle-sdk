@@ -24,7 +24,7 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     }
 
     @Override
-    public AmpSourceSetConfiguration module(Object moduleProperties) {
+    public AmpSourceSetConfiguration module(String moduleProperties) {
         module(project.file(moduleProperties));
         return this;
     }
@@ -46,7 +46,7 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     }
 
     @Override
-    public AmpSourceSetConfiguration fileMapping(Object fileMappingProperties) {
+    public AmpSourceSetConfiguration fileMapping(String fileMappingProperties) {
         fileMapping(project.file(fileMappingProperties));
         return this;
     }
