@@ -2,9 +2,12 @@ package eu.xenit.gradle.alfrescosdk.tasks;
 
 import groovy.lang.Closure;
 import org.gradle.api.Action;
+import org.gradle.api.Named;
+import org.gradle.api.NonNullApi;
 import org.gradle.util.ConfigureUtil;
 
-public interface AmpSourceSet {
+@NonNullApi
+public interface AmpSourceSet extends Named {
     AmpSourceSetConfiguration getAmp();
 
     default AmpSourceSet amp(Action<? super AmpSourceSetConfiguration> configureAction) {
@@ -20,4 +23,5 @@ public interface AmpSourceSet {
     String getFileMappingPropertiesTaskName();
     String getAmpTaskName();
     String getAmpConfigurationName();
+    String getAmpLibrariesConfigurationName();
 }
