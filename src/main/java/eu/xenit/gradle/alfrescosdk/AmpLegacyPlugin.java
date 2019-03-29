@@ -28,7 +28,7 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                     project.afterEvaluate(p -> {
                         TaskProvider<Task> ampProvider = project.getTasks().named(AMP_TASK);
 
-                        if(ampConfig.getDynamicExtension()) {
+                        if(ampConfig._getDynamicExtension()) {
                             ampProvider.configure(t -> {
                                 Amp amp = (Amp)t;
                                 FileCollection libs = amp.getLibs();

@@ -11,12 +11,15 @@ import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.internal.file.FileCollectionVisitor;
+import org.gradle.api.internal.file.FileSystemSubset.Builder;
+import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.StopExecutionException;
 import org.gradle.api.tasks.TaskDependency;
 import org.gradle.api.tasks.util.PatternFilterable;
 
-public class DefaultAmpSourceDirectories implements AmpSourceDirectories {
+public class DefaultAmpSourceDirectories implements AmpSourceDirectories, FileTreeInternal {
 
     private final SourceDirectorySet sourceDirectorySet;
 
@@ -162,5 +165,20 @@ public class DefaultAmpSourceDirectories implements AmpSourceDirectories {
     @Override
     public TaskDependency getBuildDependencies() {
         return sourceDirectorySet.getBuildDependencies();
+    }
+
+    @Override
+    public void visitTreeOrBackingFile(FileVisitor visitor) {
+        ((FileTreeInternal)sourceDirectorySet).visitTreeOrBackingFile(visitor);
+    }
+
+    @Override
+    public void registerWatchPoints(Builder builder) {
+        ((FileTreeInternal)sourceDirectorySet).registerWatchPoints(builder);
+    }
+
+    @Override
+    public void visitRootElements(FileCollectionVisitor visitor) {
+        ((FileTreeInternal)sourceDirectorySet).visitRootElements(visitor);
     }
 }

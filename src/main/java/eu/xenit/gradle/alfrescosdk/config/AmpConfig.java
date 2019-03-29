@@ -1,5 +1,8 @@
 package eu.xenit.gradle.alfrescosdk.config;
 
+import static eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper.warnDeprecationOnce;
+
+import eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import java.io.File;
 import java.util.Collections;
@@ -133,22 +136,16 @@ public class AmpConfig {
         return this.dynamicExtension;
     }
 
+    public boolean _getDynamicExtension() {
+        return this.dynamicExtension;
+    }
+
     public void setDynamicExtension(boolean dynamicExtension) {
         warnDeprecation();
         this.dynamicExtension = dynamicExtension;
     }
 
-    private static boolean deprecationWarned = false;
     private static void warnDeprecation() {
-        if(!deprecationWarned || LOGGER.isInfoEnabled()) {
-            String deprecationWarning = "Using the ampConfig configuration block is deprecated.";
-            LOGGER.warn(deprecationWarning
-                    + "Use the sourceSets configuration instead. Use info logging to get the stacktrace for this deprecation warning.");
-            deprecationWarned = true;
-            if (LOGGER.isInfoEnabled()) {
-                Exception e = new Exception(deprecationWarning);
-                LOGGER.info(deprecationWarning, e);
-            }
-        }
+        warnDeprecationOnce(LOGGER, "Using the ampConfig configuration block is deprecated. Use the sourceSets configuration instead. Use info logging to get the stacktrace for this deprecation warning.", 1);
     }
 }

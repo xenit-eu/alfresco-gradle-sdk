@@ -1,5 +1,8 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
+import static eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper.warnDeprecationOnce;
+
+import eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper;
 import groovy.lang.Closure;
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -175,7 +178,7 @@ public class Amp extends Zip {
     @Internal
     @Deprecated
     public File getWeb() {
-        LOGGER.warn("Amp::getWeb() is deprecated. For automatically configured tasks, use `sourceSets.main.amp.web.srcDirs` to get a list of source directories instead.");
+        warnDeprecationOnce(LOGGER, "Amp::getWeb() is deprecated. For automatically configured tasks, use `sourceSets.main.amp.web.srcDirs` to get a list of source directories instead.");
         if(_web.get() == null){
             return null;
         }
@@ -184,14 +187,14 @@ public class Amp extends Zip {
 
     @Deprecated
     public void setWeb(File web) {
-        LOGGER.warn("Amp::setWeb(File) is deprecated. Use `web { from(File) }` instead.");
+        warnDeprecationOnce(LOGGER, "Amp::setWeb(File) is deprecated. Use `web { from(File) }` instead.");
         this.web = () -> web;
     }
 
     @Internal
     @Deprecated
     public File getConfig() {
-        LOGGER.warn("Amp::getConfig() is deprecated. For automatically configured tasks, use `sourceSets.main.amp.config.srcDirs` to get a list of source directories instead.");
+        warnDeprecationOnce(LOGGER, "Amp::getConfig() is deprecated. For automatically configured tasks, use `sourceSets.main.amp.config.srcDirs` to get a list of source directories instead.");
         if(_config.get() == null){
             return null;
         }
@@ -200,19 +203,19 @@ public class Amp extends Zip {
 
     @Deprecated
     public void setConfig(File directory) {
-        LOGGER.warn("Amp::setConfig(File) is deprecated. Use `config { from(File) } instead.");
+        warnDeprecationOnce(LOGGER, "Amp::setConfig(File) is deprecated. Use `config { from(File) } instead.");
         this.config = () -> directory;
     }
 
     @Deprecated
     public void setWeb(Supplier<File> web) {
-        LOGGER.warn("Amp::setWeb(Supplier<File>) is deprecated. Use `web { from(File) }` instead.");
+        warnDeprecationOnce(LOGGER, "Amp::setWeb(Supplier<File>) is deprecated. Use `web { from(File) }` instead.");
         this.web = web;
     }
 
     @Deprecated
     public void setConfig(Supplier<File> config) {
-        LOGGER.warn("Amp::setConfig(Supplier<File>) is deprecated. Use `config { from(File) } instead.");
+        warnDeprecationOnce(LOGGER, "Amp::setConfig(Supplier<File>) is deprecated. Use `config { from(File) } instead.");
         this.config = config;
     }
     //</editor-fold>
