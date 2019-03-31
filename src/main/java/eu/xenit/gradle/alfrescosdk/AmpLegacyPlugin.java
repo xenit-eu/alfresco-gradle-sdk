@@ -24,13 +24,13 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                     AmpConfig ampConfig = project.getExtensions().create(AMP_EXTENSION, AmpConfig.class, project, ampSourceSet);
                     project.afterEvaluate(p -> {
                         TaskProvider<Task> ampProvider = project.getTasks().named(AMP_TASK);
-
                         if(ampConfig._getDynamicExtension()) {
                             ampProvider.configure(t -> {
                                 Amp amp = (Amp)t;
                                 FileCollection libs = amp.getLibs();
                                 amp.setLibs(null);
                                 amp.de(copySpec -> {
+                                    copySpec.from(project.getTasks().named("jar"));
                                     copySpec.from(libs);
                                 });
                             });
