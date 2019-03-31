@@ -69,4 +69,33 @@ public class Examples extends AbstractIntegrationTest {
         assertPath(Files::isRegularFile, jarFs.getPath("eu/xenit/alfresco/gradle/sample/HelloWorldWebScript.class"));
         jarFs.close();
     }
+
+    @Test
+    public void testConfiguredAlfrescoProject() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("configured-alfresco-project"));
+
+        Path buildFolder = projectFolder.toPath().resolve("build");
+        Path ampFile = buildFolder.resolve("dist/configured-alfresco-project-0.0.1.amp");
+        Path jarFile = buildFolder.resolve("libs/configured-alfresco-project-0.0.1.jar");
+
+        assertPath(Files::isRegularFile, ampFile);
+        assertPath(Files::isRegularFile, jarFile);
+
+        FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
+        assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/contenttypedetection.get.desc.xml"));
+        assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/module/configured-default-amp/module-context.xml"));
+        assertPath(Files::isRegularFile,ampFs.getPath("web/index.html"));
+        assertPath(Files::isRegularFile, ampFs.getPath("lib/tika-core-1.20.jar"));
+        Path packagedJarFile = ampFs.getPath("lib/configured-alfresco-project-0.0.1.jar");
+        assertPath(Files::isRegularFile, packagedJarFile);
+        assertArrayEquals("Jar inside amp is not identical to jar outside amp", Files.readAllBytes(jarFile), Files.readAllBytes(packagedJarFile));
+        ampFs.close();
+
+        FileSystem jarFs = FileSystems.newFileSystem(jarFile, null);
+        assertPath(Files::isRegularFile, jarFs.getPath("eu/xenit/alfresco/gradle/sample/ContentTypeDetectionWebScript.class"));
+        jarFs.close();
+
+
+    }
 }

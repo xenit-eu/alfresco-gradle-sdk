@@ -1,0 +1,8 @@
+<webscript>
+  <shortname>Content type detection</shortname>
+  <description>Simple content type detection of a node with apache tika</description>
+  <url>/eu/xenit/contenttype</url>
+  <format default="html"></format>
+  <authentication>user</authentication>
+  <family>Xenit Samples</family>
+</webscript>

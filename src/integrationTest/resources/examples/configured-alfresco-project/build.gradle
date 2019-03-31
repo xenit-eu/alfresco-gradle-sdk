@@ -1,0 +1,27 @@
+plugins {
+    id 'eu.xenit.alfresco'
+    id 'eu.xenit.amp'
+}
+
+description = "Content type detection Webscript, very useful"
+version = "0.0.1"
+
+ext.alfrescoVersion = "5.2.g"
+
+repositories {
+    mavenCentral()
+    jcenter()
+    alfrescoPublic()
+}
+
+ampConfig {
+    configDir = file("src/main/alfrescoAmp/config")
+    webDir = file("src/main/alfrescoAmp/web")
+    moduleProperties = file("src/main/alfrescoAmp/module.properties")
+}
+
+
+dependencies {
+    alfrescoProvided "org.alfresco:alfresco-repository:${alfrescoVersion}"
+    implementation "org.apache.tika:tika-core:1.20"
+}
