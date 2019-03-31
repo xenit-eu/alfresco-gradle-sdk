@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class Examples extends AbstractIntegrationTest {
 
-    private static Path EXAMPLES = Paths.get("src", "integration-test", "resources", "examples");
+    private static Path EXAMPLES = Paths.get("src", "integrationTest", "resources", "examples");
 
     private static void assertPath(Predicate<Path> check, Path path) {
         assertTrue(path.toString(), check.test(path));
