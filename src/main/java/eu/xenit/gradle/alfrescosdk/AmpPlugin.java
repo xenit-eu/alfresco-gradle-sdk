@@ -28,7 +28,7 @@ public class AmpPlugin implements Plugin<Project> {
         amp.setFileMappingProperties(ampConfig::getFileMappingProperties);
 
         project.getPluginManager().withPlugin(AlfrescoPlugin.PLUGIN_ID, appliedPlugin -> {
-            FileCollection runtime = project.getConfigurations().getAt("runtime");
+            FileCollection runtime = project.getConfigurations().getAt("runtimeClasspath");
             FileCollection jarArtifact = project.getTasks().getAt("jar").getOutputs().getFiles();
             FileCollection jars = runtime.plus(jarArtifact);
             amp.setLibs(jars);
