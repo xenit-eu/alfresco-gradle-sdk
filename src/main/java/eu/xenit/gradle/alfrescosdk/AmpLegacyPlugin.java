@@ -31,6 +31,7 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                                 Amp amp = (Amp)t;
                                 FileCollection libs = amp.getLibs();
                                 amp.setLibs(null);
+                                amp.setJar(null);
                                 amp.de(copySpec -> {
                                     copySpec.from(project.getTasks().named("jar"));
                                     copySpec.from(libs);

@@ -59,7 +59,7 @@ public class Amp extends Zip {
         });
         ampCopySpec.into("lib", spec -> {
             spec.from(new Callable<Jar>() {
-                public Jar call() { return jar.get(); }
+                public Jar call() { return jar != null?jar.get():null; }
             });
         });
         ampCopySpec.into("licenses", spec -> {
