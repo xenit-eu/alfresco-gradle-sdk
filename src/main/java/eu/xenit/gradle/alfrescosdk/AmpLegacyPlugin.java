@@ -10,7 +10,9 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
@@ -18,10 +20,10 @@ public class AmpLegacyPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getPlugins().apply(JavaPlugin.class); // Applying the java plugin ensures that the main source set is created
+
         project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
-            ampBasePlugin.configureAmpSourceSets(ampSourceSet ->  {
-                if(ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
-                    AmpConfig ampConfig = project.getExtensions().create(AMP_EXTENSION, AmpConfig.class, project, ampSourceSet);
+            ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, ampSourceSetConfiguration ->  {
+                    AmpConfig ampConfig = project.getExtensions().create(AMP_EXTENSION, AmpConfig.class, project, ampSourceSetConfiguration);
                     project.afterEvaluate(p -> {
                         TaskProvider<Task> ampProvider = project.getTasks().named(AMP_TASK);
                         if(ampConfig._getDynamicExtension()) {
@@ -36,15 +38,15 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                             });
                         }
 
-                        if(ampSourceSet.getAmp().getWeb().getSrcDirs().size() == 1) {
+                        if(ampSourceSetConfiguration.getWeb().getSrcDirs().size() == 1) {
                             ampProvider.configure(amp -> {
-                                ((Amp)amp)._setWeb(() -> ampSourceSet.getAmp().getWeb().getSrcDirs().iterator().next());
+                                ((Amp)amp)._setWeb(() -> ampSourceSetConfiguration.getWeb().getSrcDirs().iterator().next());
                             });
                         }
-                        if(ampSourceSet.getAmp().getConfig().getSrcDirs().size() == 1) {
+                        if(ampSourceSetConfiguration.getConfig().getSrcDirs().size() == 1) {
                             ampProvider.configure(amp -> {
                                 ((Amp)amp)._setConfig(() -> {
-                                    File dir = ampSourceSet.getAmp().getConfig().getSrcDirs().iterator().next();
+                                    File dir = ampSourceSetConfiguration.getConfig().getSrcDirs().iterator().next();
                                     if(dir.equals(project.file(AmpConfig.DEFAULT_CONFIG_DIR)) && !dir.exists()) {
                                         return null;
                                     }
@@ -53,8 +55,6 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                             });
                         }
                     });
-
-                }
             });
         });
     }

@@ -70,4 +70,21 @@ public class ConfigurationDispatcherTest {
 
     }
 
+    @Test
+    public void configurationMultipleIdentical() {
+        ConfigurationDispatcher<String> dispatcher = new ConfigurationDispatcher<>();
+
+        dispatcher.add("abc");
+
+        CallsCollector callsCollector = new CallsCollector();
+        dispatcher.add(callsCollector);
+
+        assertEquals(Collections.singletonList("abc"), callsCollector.getConfigurations());
+
+        dispatcher.add("abc");
+
+        assertEquals(Collections.singletonList("abc"), callsCollector.getConfigurations());
+
+    }
+
 }

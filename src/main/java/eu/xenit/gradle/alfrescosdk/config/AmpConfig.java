@@ -4,6 +4,7 @@ import static eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper.warnDepreca
 
 import eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
+import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -24,12 +25,12 @@ public class AmpConfig {
     private Supplier<File> fileMappingPropertiesSupplier;
     private boolean dynamicExtension = false;
 
-    private final AmpSourceSet ampSourceSet;
+    private final AmpSourceSetConfiguration ampSourceSetConfiguration;
     private final Project project;
 
-    public AmpConfig(Project project, AmpSourceSet ampSourceSet) {
+    public AmpConfig(Project project, AmpSourceSetConfiguration ampSourceSetConfiguration) {
         this.project = project;
-        this.ampSourceSet = ampSourceSet;
+        this.ampSourceSetConfiguration = ampSourceSetConfiguration;
         modulePropertiesSupplier = () -> project.file(DEFAULT_MODULE_PROPERTIES);
         configDirSupplier = () -> {
             File file = project.file(DEFAULT_CONFIG_DIR);
@@ -60,7 +61,7 @@ public class AmpConfig {
 
     public void setModuleProperties(File moduleProperties) {
         warnDeprecation();
-        ampSourceSet.getAmp().module(moduleProperties);
+        ampSourceSetConfiguration.module(moduleProperties);
         this.modulePropertiesSupplier = () -> moduleProperties;
     }
 
@@ -71,7 +72,7 @@ public class AmpConfig {
 
     public void setConfigDir(File configDir) {
         warnDeprecation();
-        ampSourceSet.getAmp().getConfig().setSrcDirs(Collections.singleton(configDir));
+        ampSourceSetConfiguration.getConfig().setSrcDirs(Collections.singleton(configDir));
         this.configDirSupplier = () -> configDir;
     }
 
@@ -82,7 +83,7 @@ public class AmpConfig {
 
     public void setWebDir(File webDir) {
         warnDeprecation();
-        ampSourceSet.getAmp().getWeb().setSrcDirs(Collections.singleton(webDir));
+        ampSourceSetConfiguration.getWeb().setSrcDirs(Collections.singleton(webDir));
         this.webDirSupplier = () -> webDir;
     }
 
@@ -94,7 +95,7 @@ public class AmpConfig {
     public void setModuleProperties(Supplier<File> moduleProperties) {
         warnDeprecation();
         project.afterEvaluate(p -> {
-            ampSourceSet.getAmp().module(modulePropertiesSupplier.get());
+            ampSourceSetConfiguration.module(modulePropertiesSupplier.get());
         });
 
         this.modulePropertiesSupplier = moduleProperties;
@@ -103,7 +104,7 @@ public class AmpConfig {
     public void setConfigDir(Supplier<File> configDir) {
         warnDeprecation();
         project.afterEvaluate(p -> {
-            ampSourceSet.getAmp().getConfig().setSrcDirs(Collections.singleton(configDirSupplier.get()));
+            ampSourceSetConfiguration.getConfig().setSrcDirs(Collections.singleton(configDirSupplier.get()));
         });
         this.configDirSupplier = configDir;
     }
@@ -111,7 +112,7 @@ public class AmpConfig {
     public void setWebDir(Supplier<File> webDir) {
         warnDeprecation();
         project.afterEvaluate(p -> {
-            ampSourceSet.getAmp().getWeb().setSrcDirs(Collections.singleton(webDirSupplier.get()));
+            ampSourceSetConfiguration.getWeb().setSrcDirs(Collections.singleton(webDirSupplier.get()));
         });
         this.webDirSupplier = webDir;
     }
@@ -119,7 +120,7 @@ public class AmpConfig {
     public void setFileMappingProperties(Supplier<File> fileMappingProperties) {
         warnDeprecation();
         project.afterEvaluate(p -> {
-            ampSourceSet.getAmp().fileMapping(fileMappingPropertiesSupplier.get());
+            ampSourceSetConfiguration.fileMapping(fileMappingPropertiesSupplier.get());
         });
 
         this.fileMappingPropertiesSupplier = fileMappingProperties;
@@ -127,7 +128,7 @@ public class AmpConfig {
 
     public void setFileMappingProperties(File fileMappingProperties) {
         warnDeprecation();
-        ampSourceSet.getAmp().fileMapping(fileMappingProperties);
+        ampSourceSetConfiguration.fileMapping(fileMappingProperties);
         this.fileMappingPropertiesSupplier = () -> fileMappingProperties;
     }
 

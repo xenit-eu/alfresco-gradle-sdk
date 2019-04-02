@@ -27,7 +27,9 @@ public class AmpPlugin implements Plugin<Project> {
         project.getPluginManager().apply(AmpLegacyPlugin.class);
 
         project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
-            ampBasePlugin.configureAmpSourceSets(ampSourceSet -> {
+            // Automatically configure main sourceset for amps
+            ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
+            ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
                 configureJarTask(project, ampSourceSet);
                 TaskProvider<Amp> ampTask = configureAmpTask(project, ampSourceSet);
                 project.getConfigurations().register(ampSourceSet.getAmpConfigurationName());
