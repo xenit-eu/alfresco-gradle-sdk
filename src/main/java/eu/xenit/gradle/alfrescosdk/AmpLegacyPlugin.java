@@ -15,6 +15,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.jvm.tasks.Jar;
 
 public class AmpLegacyPlugin implements Plugin<Project> {
     @Override
@@ -31,7 +32,7 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                                 Amp amp = (Amp)t;
                                 FileCollection libs = amp.getLibs();
                                 amp.setLibs(null);
-                                amp.setJar(null);
+                                amp.setJar((Jar) null);
                                 amp.de(copySpec -> {
                                     copySpec.from(project.getTasks().named("jar"));
                                     copySpec.from(libs);
