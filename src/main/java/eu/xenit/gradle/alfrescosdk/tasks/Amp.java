@@ -29,7 +29,7 @@ public class Amp extends Zip {
 
     private FileCollection libs = getProject().files();
 
-    private Jar jar;
+    private Supplier<Jar> jar;
 
     private FileCollection licenses = getProject().files();
 
@@ -59,7 +59,7 @@ public class Amp extends Zip {
         });
         ampCopySpec.into("lib", spec -> {
             spec.from(new Callable<Jar>() {
-                public Jar call() { return jar; }
+                public Jar call() { return jar.get(); }
             });
         });
         ampCopySpec.into("licenses", spec -> {
@@ -166,6 +166,10 @@ public class Amp extends Zip {
     //</editor-fold>
 
     public void setJar(Jar jar) {
+        this.jar = () -> jar;
+    }
+
+    public void setJar(Supplier<Jar> jar) {
         this.jar = jar;
     }
 

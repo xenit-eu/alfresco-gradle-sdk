@@ -15,8 +15,12 @@ hs_err_pid*
 
 # IntelliJ
 .idea
+*.iml
+*.ipr
+*.iws
 out
 
 # Gradle
 .gradle
 build
+
