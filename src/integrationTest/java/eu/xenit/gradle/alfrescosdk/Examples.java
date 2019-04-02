@@ -60,6 +60,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("lib/simple-de-project-0.0.1.jar"));
         Path packagedJarFile = ampFs.getPath("config/dynamic-extensions/bundles/simple-de-project-0.0.1.jar");
         assertPath(Files::isRegularFile, packagedJarFile);
         assertArrayEquals("Jar inside amp is not identical to jar outside amp", Files.readAllBytes(jarFile), Files.readAllBytes(packagedJarFile));
