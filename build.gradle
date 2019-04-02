@@ -42,6 +42,7 @@ task integrationTest(type: Test, group: "verification") {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     systemProperty("eu.xenit.gradle.alfrescosdk.deprecation", "false")
+    mustRunAfter(test)
 }
 
 check.dependsOn(integrationTest)
