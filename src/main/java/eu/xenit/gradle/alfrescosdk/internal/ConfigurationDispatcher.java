@@ -6,9 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.gradle.api.Action;
-import org.gradle.api.Named;
 
-public class ConfigurationDispatcher<T extends Named> {
+public class ConfigurationDispatcher<T> {
     private final List<Action<? super T>> actions = new LinkedList<>();
 
     private final List<T> configurations = new ArrayList<>();
