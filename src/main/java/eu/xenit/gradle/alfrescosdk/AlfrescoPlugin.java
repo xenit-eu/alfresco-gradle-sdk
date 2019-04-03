@@ -1,8 +1,5 @@
 package eu.xenit.gradle.alfrescosdk;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovyObject;
-import org.codehaus.groovy.runtime.MethodClosure;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -10,12 +7,11 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.logging.Logger;
-import org.gradle.api.logging.Logging;
-import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceSetContainer;
 
 public class AlfrescoPlugin implements Plugin<Project> {
 
@@ -23,58 +19,76 @@ public class AlfrescoPlugin implements Plugin<Project> {
     public static final String PLUGIN_ID = "eu.xenit.alfresco";
     public static final String ALFRESCO_REPOSITORY_PUBLIC = "https://artifacts.alfresco.com/nexus/content/groups/public/";
 
+    private Project project;
+
     @Override
     public void apply(Project project) {
+        this.project = project;
         project.getPluginManager().apply(JavaPlugin.class);
-        // Configure an alfrescoProvided configuration for every sourceset
-        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
-            if(sourceSet.getName().endsWith("Test")) {
-                // Do not apply for other test source sets (e.g. integration tests)
-                return;
-            }
 
-            // For the main test sourceset, add the alfrescoProvided configuration to the implementation dependencies
-            if(sourceSet.getName().equals(SourceSet.TEST_SOURCE_SET_NAME)) {
-                project.getConfigurations().named(sourceSet.getImplementationConfigurationName()).configure(testImpl -> {
-                    NamedDomainObjectProvider<Configuration> alfrescoProvided = project.getConfigurations().named(ALFRESCO_PROVIDED);
-                    if(alfrescoProvided.isPresent()) {
-                        testImpl.extendsFrom(alfrescoProvided.get());
+        configureRepository();
+
+        project.getPlugins().withType(JavaBasePlugin.class, javaBasePlugin -> {
+            SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+
+            sourceSets.all(sourceSet -> {
+                if (sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
+                    registerAlfrescoProvided(sourceSet);
+                }
+            });
+            // Separate callback function, so the configuration for the test sourceset certainly happens after the main sourceset
+            sourceSets.all(sourceSet -> {
+                if(sourceSet.getName().equals(SourceSet.TEST_SOURCE_SET_NAME)) {
+                    project.getConfigurations().named(sourceSet.getImplementationConfigurationName())
+                            .configure(testImplementation -> {
+                                testImplementation.extendsFrom(project.getConfigurations().getByName(ALFRESCO_PROVIDED));
+                            });
+                }
+            });
+
+            // Configure other amp sourcesets with an alfrescoProvided configuration
+            project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
+                ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
+                    if(ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
+                        // Main sourceset is already configured above, do not configure it again
+                        return;
                     }
+                    SourceSet sourceSet = sourceSets.getByName(ampSourceSet.getName());
+                    registerAlfrescoProvided(sourceSet);
                 });
-            } else {
-                NamedDomainObjectProvider<Configuration> alfrescoProvided = project.getConfigurations()
-                        .register(sourceSet.getTaskName(null, ALFRESCO_PROVIDED));
-                project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName())
-                        .configure(compileOnly -> {
-                            compileOnly.extendsFrom(alfrescoProvided.get());
-                        });
-            }
-
+            });
         });
 
-        RepositoryHandler repositories = project.getRepositories();
-        new DslObject(repositories).getExtensions().add("alfrescoPublic", new AlfrescoPublicRepository(this, repositories));
     }
 
-    private static class AlfrescoPublicRepository extends Closure<MavenArtifactRepository> {
+    private NamedDomainObjectProvider<Configuration> registerAlfrescoProvided(SourceSet sourceSet) {
+        String alfrescoProvidedName = sourceSet.getTaskName(null, ALFRESCO_PROVIDED);
+        NamedDomainObjectProvider<Configuration> alfrescoProvided = project.getConfigurations().register(alfrescoProvidedName);
+        project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName())
+                .configure(compileOnly -> {
+                    compileOnly.extendsFrom(alfrescoProvided.get());
+                });
+        return alfrescoProvided;
+    }
+
+    private void configureRepository() {
+        RepositoryHandler repositories = project.getRepositories();
+        new DslObject(repositories).getConvention().add("alfrescoPublic", new AlfrescoPublicRepositoryConvention(repositories));
+    }
+
+    public static class AlfrescoPublicRepositoryConvention {
 
         private final RepositoryHandler repositories;
 
-        private AlfrescoPublicRepository(Object owner, RepositoryHandler repositories) {
-            super(owner);
+        private AlfrescoPublicRepositoryConvention(RepositoryHandler repositories) {
             this.repositories = repositories;
         }
 
-        public MavenArtifactRepository doCall() {
+        public MavenArtifactRepository alfrescoPublic() {
             return repositories.maven(repo -> {
                 repo.setUrl(ALFRESCO_REPOSITORY_PUBLIC);
                 repo.setName("Alfresco Public");
             });
-        }
-
-        @Override
-        public AlfrescoPublicRepository clone() {
-            return (AlfrescoPublicRepository) super.clone();
         }
     }
 }
