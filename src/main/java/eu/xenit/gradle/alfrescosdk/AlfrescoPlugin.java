@@ -1,5 +1,6 @@
 package eu.xenit.gradle.alfrescosdk;
 
+import groovy.lang.Closure;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -73,18 +74,19 @@ public class AlfrescoPlugin implements Plugin<Project> {
 
     private void configureRepository() {
         RepositoryHandler repositories = project.getRepositories();
-        new DslObject(repositories).getConvention().add("alfrescoPublic", new AlfrescoPublicRepositoryConvention(repositories));
+        new DslObject(repositories).getExtensions().add("alfrescoPublic", new AlfrescoPublicRepositoryConvention(repositories));
     }
 
-    public static class AlfrescoPublicRepositoryConvention {
+    public static class AlfrescoPublicRepositoryConvention extends Closure<MavenArtifactRepository> {
 
         private final RepositoryHandler repositories;
 
         private AlfrescoPublicRepositoryConvention(RepositoryHandler repositories) {
+            super(repositories);
             this.repositories = repositories;
         }
 
-        public MavenArtifactRepository alfrescoPublic() {
+        public MavenArtifactRepository doCall() {
             return repositories.maven(repo -> {
                 repo.setUrl(ALFRESCO_REPOSITORY_PUBLIC);
                 repo.setName("Alfresco Public");
