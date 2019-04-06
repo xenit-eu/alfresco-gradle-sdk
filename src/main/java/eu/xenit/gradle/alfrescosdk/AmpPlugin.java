@@ -31,7 +31,9 @@ public class AmpPlugin implements Plugin<Project> {
             ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
             ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
                 configureJarTask(project, ampSourceSet);
-                TaskProvider<Amp> ampTask = configureAmpTask(project, ampSourceSet);
+                TaskProvider<Amp> ampTask = project.getTasks().withType(Amp.class).named(ampSourceSet.getAmpTaskName());
+
+                // Configure amp artifact
                 project.getConfigurations().register(ampSourceSet.getAmpConfigurationName());
                 project.getArtifacts().add(ampSourceSet.getAmpConfigurationName(), ampTask);
 
@@ -46,44 +48,19 @@ public class AmpPlugin implements Plugin<Project> {
         });
     }
 
-    private TaskProvider<Amp> configureAmpTask(Project project, AmpSourceSet ampSourceSet) {
-        return project.getTasks().register(ampSourceSet.getAmpTaskName(), Amp.class, amp -> {
-            amp.setModuleProperties(() -> project.getTasks().getByName(ampSourceSet.getModulePropertiesTaskName()).getOutputs().getFiles().getSingleFile());
-            amp.setFileMappingProperties(() -> project.getTasks().getByName(ampSourceSet.getFileMappingPropertiesTaskName()).getOutputs().getFiles().getSingleFile());
-            amp.web(copySpec -> {
-                copySpec.from(ampSourceSet.getAmp().getWeb());
-            });
-            amp.config(copySpec -> {
-                copySpec.from(ampSourceSet.getAmp().getConfig());
-            });
-            amp.getLibs().from(project.getConfigurations().getByName(ampSourceSet.getAmpLibrariesConfigurationName()));
-            amp.getLibs().from(project.getTasks().named(ampSourceSet.getJarTaskName()).get());
-            amp.dependsOn(
-                    ampSourceSet.getJarTaskName(),
-                    ampSourceSet.getFileMappingPropertiesTaskName(),
-                    ampSourceSet.getModulePropertiesTaskName()
-            );
-            amp.setGroup(LifecycleBasePlugin.BUILD_GROUP);
-            if(!ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
-                amp.setClassifier(ampSourceSet.getName());
-            }
-        });
-    }
-
-
     @SuppressWarnings("unchecked")
     private TaskProvider<Jar> configureJarTask(Project project, AmpSourceSet ampSourceSet) {
         SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
         SourceSet sourceSet = sourceSets.getByName(ampSourceSet.getName());
-        if(project.getTasks().findByName(sourceSet.getJarTaskName()) == null) {
-            return project.getTasks().register(sourceSet.getJarTaskName(), Jar.class, jar -> {
-                jar.setGroup(LifecycleBasePlugin.BUILD_GROUP);
-                jar.from(sourceSet.getOutput());
-                jar.setClassifier(sourceSet.getName());
-                jar.dependsOn(sourceSet.getClassesTaskName());
-            });
+        if(project.getTasks().getNames().contains(sourceSet.getJarTaskName())) {
+            return (TaskProvider) project.getTasks().named(sourceSet.getJarTaskName());
         }
-        return (TaskProvider)project.getTasks().named(sourceSet.getJarTaskName());
+        return project.getTasks().register(sourceSet.getJarTaskName(), Jar.class, jar -> {
+            jar.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+            jar.from(sourceSet.getOutput());
+            jar.setClassifier(sourceSet.getName());
+            jar.dependsOn(sourceSet.getClassesTaskName());
+        });
     }
 
 }

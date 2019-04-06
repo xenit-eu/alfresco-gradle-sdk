@@ -1,9 +1,11 @@
 package eu.xenit.gradle.alfrescosdk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import eu.xenit.gradle.alfrescosdk.internal.tasks.DefaultAmpSourceSet;
+import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
-import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.internal.project.DefaultProject;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -76,6 +78,7 @@ public class AmpBasePluginTest {
 
         assertNotNull(project.getTasks().findByName("processShareModuleProperties"));
         assertNotNull(project.getTasks().findByName("processShareFileMappingProperties"));
+        assertTrue(project.getTasks().getNames().contains("shareAmp"));
 
         AmpSourceSet shareAmpSourceSet = project.getPlugins()
                 .getPlugin(AmpBasePlugin.class)
@@ -102,6 +105,8 @@ public class AmpBasePluginTest {
         GUtil.saveProperties(fileMappingProperties, fileMappingPropertiesFile);
 
         DefaultProject project = getDefaultProject();
+        // Java plugin is required for the jar task
+        project.getPlugins().apply(JavaPlugin.class);
 
         // write an amp {} block inside a sourceset
         project.getPlugins().getPlugin(AmpBasePlugin.class).configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
@@ -114,14 +119,19 @@ public class AmpBasePluginTest {
         WriteProperties fileMappingPropertiesTask = project.getTasks().withType(WriteProperties.class).findByName("processFileMappingProperties");
         assertNotNull(fileMappingPropertiesTask);
         assertEquals("/", fileMappingPropertiesTask.getProperties().get("/override"));
+
+        Amp ampTask = project.getTasks().withType(Amp.class).findByName("amp");
+        assertNotNull(ampTask);
+
+        assertTrue(ampTask.getDeBundles().isEmpty());
+        assertFalse(ampTask.getLibs().isEmpty());
+        assertEquals(modulePropertiesTask.getOutputFile(), ampTask.getModuleProperties());
+        assertEquals(fileMappingPropertiesTask.getOutputFile(), ampTask.getFileMappingProperties());
     }
 
     @Test
     public void manualConfigureSourceSet() {
         DefaultProject project = getDefaultProject();
-
-        SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class)
-                .getSourceSets();
 
         project.getPlugins().getPlugin(AmpBasePlugin.class).configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, ampConfig -> {
             ampConfig.module(moduleProperties -> {

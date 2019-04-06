@@ -2,6 +2,7 @@ package eu.xenit.gradle.alfrescosdk;
 
 import eu.xenit.gradle.alfrescosdk.internal.ConfigurationDispatcher;
 import eu.xenit.gradle.alfrescosdk.internal.tasks.DefaultAmpSourceSet;
+import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
@@ -14,6 +15,8 @@ import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.SourceDirectorySetFactory;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.logging.Logging;
@@ -22,7 +25,9 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.WriteProperties;
+import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.slf4j.Logger;
 
 public class AmpBasePlugin implements Plugin<Project> {
@@ -95,6 +100,7 @@ public class AmpBasePlugin implements Plugin<Project> {
         sourceSetConfigurationDispatcher.add(ampSourceSet -> {
             createWritePropertiesTask(ampSourceSet.getModulePropertiesTaskName(), ampSourceSet.getName(), "module.properties", ampSourceSet.getAmp().getModuleProperties());
             createWritePropertiesTask(ampSourceSet.getFileMappingPropertiesTaskName(), ampSourceSet.getName(), "file-mapping.properties", ampSourceSet.getAmp().getFileMappingProperties());
+            createAmpTask(project, ampSourceSet);
         });
     }
 
@@ -103,6 +109,37 @@ public class AmpBasePlugin implements Plugin<Project> {
             writeProperties.setDescription("Creates "+fileName+" for "+sourceSetName);
             writeProperties.setProperties(properties.map(AmpBasePlugin::propertiesToMap).get());
             writeProperties.setOutputFile(project.getBuildDir().toPath().resolve(taskName).resolve(fileName).toFile());
+        });
+    }
+
+    private TaskProvider<Amp> createAmpTask(Project project, DefaultAmpSourceSet ampSourceSet) {
+        return project.getTasks().register(ampSourceSet.getAmpTaskName(), Amp.class, amp -> {
+            amp.setModuleProperties(() -> project.getTasks().getByName(ampSourceSet.getModulePropertiesTaskName()).getOutputs().getFiles().getSingleFile());
+            amp.setFileMappingProperties(() -> project.getTasks().getByName(ampSourceSet.getFileMappingPropertiesTaskName()).getOutputs().getFiles().getSingleFile());
+            amp.web(copySpec -> {
+                copySpec.from(ampSourceSet.getAmp().getWeb());
+            });
+            amp.config(copySpec -> {
+                copySpec.from(ampSourceSet.getAmp().getConfig());
+            });
+            Provider<Boolean> dynamicExtension = ampSourceSet.getAmp().getDynamicExtension();
+            Provider<Configuration> ampLibrariesConfiguration = project.getConfigurations().named(ampSourceSet.getAmpLibrariesConfigurationName());
+            Provider<FileCollection> jarOutputs = project.getTasks().named(ampSourceSet.getJarTaskName()).map(t -> t.getOutputs().getFiles());
+            // When not a dynamic extension, configure libs
+            amp.getLibs().from(dynamicExtension.map(de -> de?project.files():ampLibrariesConfiguration.get()));
+            amp.getLibs().from(dynamicExtension.map(de -> de?project.files():jarOutputs.get()));
+            // When a dynamic extension, configure de bundles
+            amp.getDeBundles().from(dynamicExtension.map(de -> de?ampLibrariesConfiguration.get():project.files()));
+            amp.getDeBundles().from(dynamicExtension.map(de -> de?jarOutputs.get():project.files()));
+            amp.dependsOn(
+                    ampSourceSet.getJarTaskName(),
+                    ampSourceSet.getFileMappingPropertiesTaskName(),
+                    ampSourceSet.getModulePropertiesTaskName()
+            );
+            amp.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+            if(!ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
+                amp.setClassifier(ampSourceSet.getName());
+            }
         });
     }
 
