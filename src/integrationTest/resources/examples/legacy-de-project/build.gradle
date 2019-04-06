@@ -12,16 +12,11 @@ plugins {
     id 'eu.xenit.amp'
 }
 
-sourceSets {
-    main {
-        amp {
-            dynamicExtension()
-        }
-    }
-}
-
 apply plugin: 'alfresco-dynamic-extension'
 
+ampConfig {
+    dynamicExtension = true
+}
 
 description = "HelloWorld Webscript, very useful"
 version = "0.0.1"

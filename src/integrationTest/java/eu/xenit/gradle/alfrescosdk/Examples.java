@@ -47,6 +47,31 @@ public class Examples extends AbstractIntegrationTest {
     }
 
     @Test
+    public void testLegacyDeProject() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("legacy-de-project"));
+
+        Path buildFolder = projectFolder.toPath().resolve("build");
+
+        Path ampFile = buildFolder.resolve("dist/legacy-de-project-0.0.1.amp");
+        Path jarFile = buildFolder.resolve("libs/legacy-de-project-0.0.1.jar");
+
+        assertPath(Files::isRegularFile, ampFile);
+        assertPath(Files::isRegularFile, jarFile);
+
+        FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
+        assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("lib/legacy-de-project-0.0.1.jar"));
+        Path packagedJarFile = ampFs.getPath("config/dynamic-extensions/bundles/legacy-de-project-0.0.1.jar");
+        assertPath(Files::isRegularFile, packagedJarFile);
+        assertArrayEquals("Jar inside amp is not identical to jar outside amp", Files.readAllBytes(jarFile), Files.readAllBytes(packagedJarFile));
+        ampFs.close();
+
+        FileSystem jarFs = FileSystems.newFileSystem(jarFile, null);
+        assertPath(Files::isRegularFile, jarFs.getPath("eu/xenit/alfresco/gradle/sample/HelloWorldWebScript.class"));
+        jarFs.close();
+    }
+
+    @Test
     public void testSimpleDeProject() throws IOException {
         testProjectFolder(EXAMPLES.resolve("simple-de-project"));
 
