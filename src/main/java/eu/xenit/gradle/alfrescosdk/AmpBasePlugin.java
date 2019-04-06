@@ -16,14 +16,18 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.file.SourceDirectorySetFactory;
 import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.WriteProperties;
+import org.slf4j.Logger;
 
 public class AmpBasePlugin implements Plugin<Project> {
+
+    public static final Logger LOGGER = Logging.getLogger(AmpBasePlugin.class);
 
     private final SourceDirectorySetFactory sourceDirectorySetFactory;
     private final ConfigurationDispatcher<DefaultAmpSourceSet> sourceSetConfigurationDispatcher;
@@ -61,6 +65,25 @@ public class AmpBasePlugin implements Plugin<Project> {
             File moduleProperties = project.file(rootDir+"/module.properties");
             if(moduleProperties.exists()) {
                 ampSourceSet.getAmp().module(moduleProperties);
+            } else {
+                ampSourceSet.getAmp().module(properties -> {
+                    LOGGER.info("{} does not exist for configured amp sourceset {}. A module.properties file is configured automatically from the project", moduleProperties, ampSourceSet.getName());
+                    String moduleId = project.getGroup().toString();
+                    if(!moduleId.isEmpty()) {
+                        moduleId+=".";
+                    }
+                    moduleId+=project.getName();
+                    String moduleVersion = project.getVersion().toString();
+                    if(moduleVersion.equals(Project.DEFAULT_VERSION)) {
+                        moduleVersion = "0.0.0";
+                    }
+                    properties.setProperty("module.id", moduleId);
+                    properties.setProperty("module.version", moduleVersion);
+                    properties.setProperty("module.title", project.getName());
+                    if(project.getDescription() != null) {
+                        properties.setProperty("module.description", project.getDescription());
+                    }
+                });
             }
             File fileMappingProperties = project.file(rootDir+"/file-mapping.properties");
             if(fileMappingProperties.exists()) {
