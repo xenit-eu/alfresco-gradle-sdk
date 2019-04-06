@@ -11,7 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.*;
 
-public class AmpPluginTest {
+public class AmpLegacyPluginTest {
 
     @Rule
     public TemporaryFolder projectFolder = new TemporaryFolder();
@@ -57,7 +57,8 @@ public class AmpPluginTest {
         Amp ampTask = (Amp) project.getTasks().getByName("amp");
         assertNotNull(ampTask);
         project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should clear the libs
-        assertNull(ampTask.getLibs());
+        assertTrue(ampTask.getLibs().isEmpty());
+        assertFalse(ampTask.getDeBundles().isEmpty());
     }
 
     @Test
@@ -71,7 +72,8 @@ public class AmpPluginTest {
         assertNotNull(ampTask);
         ampTask.setLibs(project.files("this/doesnt/exist"));
         project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should leave the libs alone
-        assertNotNull(ampTask.getLibs());
+        assertFalse(ampTask.getLibs().isEmpty());
+        assertFalse(ampTask.getDeBundles().isEmpty());
     }
     @Test
     public void testProjectWithConfiguredConfigDir(){
@@ -84,7 +86,7 @@ public class AmpPluginTest {
         project.evaluate(); // Evaluate the project so that the afterEvaluate can run, which should leave the libs alone
         Amp ampTask = (Amp) project.getTasks().getByName("amp");
         assertNotNull(ampTask);
-        assertEquals(need_this,ampTask.getConfig()); ;
+        assertEquals(need_this,ampTask.getConfig());
     }
 
 }

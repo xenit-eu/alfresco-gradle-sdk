@@ -56,8 +56,8 @@ public class AmpPlugin implements Plugin<Project> {
             amp.config(copySpec -> {
                 copySpec.from(ampSourceSet.getAmp().getConfig());
             });
-            amp.setLibs(project.getConfigurations().getByName(ampSourceSet.getAmpLibrariesConfigurationName()));
-            amp.setJar(() -> project.getTasks().named(ampSourceSet.getJarTaskName()).map(t -> (Jar)t).get());
+            amp.getLibs().from(project.getConfigurations().getByName(ampSourceSet.getAmpLibrariesConfigurationName()));
+            amp.getLibs().from(project.getTasks().named(ampSourceSet.getJarTaskName()).get());
             amp.dependsOn(
                     ampSourceSet.getJarTaskName(),
                     ampSourceSet.getFileMappingPropertiesTaskName(),

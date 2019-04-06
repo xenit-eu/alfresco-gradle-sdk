@@ -30,13 +30,9 @@ public class AmpLegacyPlugin implements Plugin<Project> {
                         if(ampConfig._getDynamicExtension()) {
                             ampProvider.configure(t -> {
                                 Amp amp = (Amp)t;
-                                FileCollection libs = amp.getLibs();
-                                amp.setLibs(null);
-                                amp.setJar((Jar) null);
-                                amp.de(copySpec -> {
-                                    copySpec.from(project.getTasks().named("jar"));
-                                    copySpec.from(libs);
-                                });
+                                amp.setLibs(amp.getLibs().minus(project.getConfigurations().getByName("runtimeClasspath")).minus(project.getTasks().findByName("jar").getOutputs().getFiles()));
+                                amp.getDeBundles().from(project.getConfigurations().getByName("runtimeClasspath"));
+                                amp.getDeBundles().from(project.getTasks().named("jar"));
                             });
                         }
 
