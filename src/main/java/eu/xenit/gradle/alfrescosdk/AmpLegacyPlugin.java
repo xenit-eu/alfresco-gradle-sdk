@@ -1,21 +1,17 @@
 package eu.xenit.gradle.alfrescosdk;
 
 import static eu.xenit.gradle.alfrescosdk.AmpPlugin.AMP_EXTENSION;
-import static eu.xenit.gradle.alfrescosdk.AmpPlugin.AMP_TASK;
 
 import eu.xenit.gradle.alfrescosdk.config.AmpConfig;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
+import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.jvm.tasks.Jar;
 
 public class AmpLegacyPlugin implements Plugin<Project> {
     @Override
@@ -24,35 +20,29 @@ public class AmpLegacyPlugin implements Plugin<Project> {
 
         project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
             ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, ampSourceSetConfiguration ->  {
-                    AmpConfig ampConfig = project.getExtensions().create(AMP_EXTENSION, AmpConfig.class, project, ampSourceSetConfiguration);
-                    project.afterEvaluate(p -> {
-                        TaskProvider<Task> ampProvider = project.getTasks().named(AMP_TASK);
-                        if(ampConfig._getDynamicExtension()) {
-                            ampProvider.configure(t -> {
-                                Amp amp = (Amp)t;
-                                amp.setLibs(amp.getLibs().minus(project.getConfigurations().getByName("runtimeClasspath")).minus(project.getTasks().findByName("jar").getOutputs().getFiles()));
-                                amp.getDeBundles().from(project.getConfigurations().getByName("runtimeClasspath"));
-                                amp.getDeBundles().from(project.getTasks().named("jar"));
+                project.getExtensions().create(AMP_EXTENSION, AmpConfig.class, project, ampSourceSetConfiguration);
+            });
+            ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
+                if(ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
+                    TaskProvider<Task> ampProvider = project.getTasks().named(ampSourceSet.getAmpTaskName());
+                    AmpSourceSetConfiguration ampSourceSetConfiguration = ampSourceSet.getAmp();
+                    if(ampSourceSetConfiguration.getWeb().getSrcDirs().size() == 1) {
+                        ampProvider.configure(amp -> {
+                            ((Amp)amp)._setWeb(() -> ampSourceSetConfiguration.getWeb().getSrcDirs().iterator().next());
+                        });
+                    }
+                    if(ampSourceSetConfiguration.getConfig().getSrcDirs().size() == 1) {
+                        ampProvider.configure(amp -> {
+                            ((Amp)amp)._setConfig(() -> {
+                                File dir = ampSourceSetConfiguration.getConfig().getSrcDirs().iterator().next();
+                                if(dir.equals(project.file(AmpConfig.DEFAULT_CONFIG_DIR)) && !dir.exists()) {
+                                    return null;
+                                }
+                                return dir;
                             });
-                        }
-
-                        if(ampSourceSetConfiguration.getWeb().getSrcDirs().size() == 1) {
-                            ampProvider.configure(amp -> {
-                                ((Amp)amp)._setWeb(() -> ampSourceSetConfiguration.getWeb().getSrcDirs().iterator().next());
-                            });
-                        }
-                        if(ampSourceSetConfiguration.getConfig().getSrcDirs().size() == 1) {
-                            ampProvider.configure(amp -> {
-                                ((Amp)amp)._setConfig(() -> {
-                                    File dir = ampSourceSetConfiguration.getConfig().getSrcDirs().iterator().next();
-                                    if(dir.equals(project.file(AmpConfig.DEFAULT_CONFIG_DIR)) && !dir.exists()) {
-                                        return null;
-                                    }
-                                    return dir;
-                                });
-                            });
-                        }
-                    });
+                        });
+                    }
+                }
             });
         });
     }

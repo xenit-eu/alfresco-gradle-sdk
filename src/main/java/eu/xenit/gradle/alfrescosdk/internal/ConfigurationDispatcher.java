@@ -1,7 +1,5 @@
 package eu.xenit.gradle.alfrescosdk.internal;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;

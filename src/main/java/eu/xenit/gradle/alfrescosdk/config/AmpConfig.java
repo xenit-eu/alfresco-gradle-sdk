@@ -143,6 +143,7 @@ public class AmpConfig {
 
     public void setDynamicExtension(boolean dynamicExtension) {
         warnDeprecation();
+        ampSourceSetConfiguration.dynamicExtension(dynamicExtension);
         this.dynamicExtension = dynamicExtension;
     }
 
