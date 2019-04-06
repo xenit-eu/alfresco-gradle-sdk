@@ -52,7 +52,7 @@ public abstract class AbstractIntegrationTest {
         return GradleRunner.create()
                 .withProjectDir(tempExample)
                 .withGradleVersion(gradleVersion)
-                .withArguments(task, "--stacktrace", "--rerun-tasks", "-i")
+                .withArguments(task, "--stacktrace", "-i")
                 .withPluginClasspath()
                 .withDebug(true)
                 .forwardOutput();
