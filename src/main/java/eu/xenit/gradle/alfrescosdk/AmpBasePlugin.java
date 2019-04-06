@@ -75,10 +75,10 @@ public class AmpBasePlugin implements Plugin<Project> {
         });
     }
 
-    private Provider<WriteProperties> createWritePropertiesTask(String taskName, String sourceSetName, String fileName, Properties properties) {
+    private Provider<WriteProperties> createWritePropertiesTask(String taskName, String sourceSetName, String fileName, Provider<Properties> properties) {
         return project.getTasks().register(taskName, WriteProperties.class, writeProperties -> {
             writeProperties.setDescription("Creates "+fileName+" for "+sourceSetName);
-            writeProperties.setProperties(propertiesToMap(properties));
+            writeProperties.setProperties(properties.map(AmpBasePlugin::propertiesToMap).get());
             writeProperties.setOutputFile(project.getBuildDir().toPath().resolve(taskName).resolve(fileName).toFile());
         });
     }

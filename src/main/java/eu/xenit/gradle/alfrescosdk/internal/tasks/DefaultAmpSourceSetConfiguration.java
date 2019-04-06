@@ -7,6 +7,8 @@ import java.util.Properties;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.internal.file.SourceDirectorySetFactory;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.util.GUtil;
 
 public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfiguration {
@@ -14,13 +16,20 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     private final DefaultAmpSourceDirectories config;
     private final DefaultAmpSourceDirectories web;
     private final Project project;
-    private Properties moduleProperties = new Properties();
-    private Properties fileMappingProperties = new Properties();
+    private Property<Properties> moduleProperties;
+    private Property<Properties> fileMappingProperties;
+    private Property<Boolean> dynamicExtension;
 
     public DefaultAmpSourceSetConfiguration(Project project, SourceDirectorySetFactory sourceDirectorySetFactory) {
         this.project = project;
         config = new DefaultAmpSourceDirectories(sourceDirectorySetFactory.create("config"));
         web = new DefaultAmpSourceDirectories(sourceDirectorySetFactory.create("web"));
+        moduleProperties = project.getObjects().property(Properties.class);
+        moduleProperties.set(new Properties());
+        fileMappingProperties = project.getObjects().property(Properties.class);
+        fileMappingProperties.set(new Properties());
+        dynamicExtension = project.getObjects().property(Boolean.class);
+        dynamicExtension.set(false);
     }
 
     @Override
@@ -31,17 +40,21 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
 
     @Override
     public AmpSourceSetConfiguration module(File moduleProperties) {
-        this.moduleProperties = GUtil.loadProperties(moduleProperties);
+        this.moduleProperties.set(project.provider(() -> GUtil.loadProperties(moduleProperties)));
         return this;
     }
 
     @Override
     public AmpSourceSetConfiguration module(Action<? super Properties> configure) {
-        configure.execute(moduleProperties);
+        moduleProperties.set(project.provider(() -> {
+            Properties newProperties = new Properties();
+            configure.execute(newProperties);
+            return newProperties;
+        }));
         return this;
     }
 
-    public Properties getModuleProperties() {
+    public Provider<Properties> getModuleProperties() {
         return moduleProperties;
     }
 
@@ -53,17 +66,21 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
 
     @Override
     public AmpSourceSetConfiguration fileMapping(File fileMappingProperties) {
-        this.fileMappingProperties = GUtil.loadProperties(fileMappingProperties);
-        return null;
+        this.fileMappingProperties.set(project.provider(() -> GUtil.loadProperties(fileMappingProperties)));
+        return this;
     }
 
     @Override
     public AmpSourceSetConfiguration fileMapping(Action<? super Properties> configure) {
-        configure.execute(fileMappingProperties);
+        fileMappingProperties.set(project.provider(() -> {
+            Properties newProperties = new Properties();
+            configure.execute(newProperties);
+            return newProperties;
+        }));
         return this;
     }
 
-    public Properties getFileMappingProperties() {
+    public Provider<Properties> getFileMappingProperties() {
         return fileMappingProperties;
     }
 
@@ -75,6 +92,16 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     @Override
     public AmpSourceDirectories getWeb() {
         return web;
+    }
+
+    @Override
+    public AmpSourceSetConfiguration dynamicExtension(boolean dynamicExtension) {
+        this.dynamicExtension.set(dynamicExtension);
+        return this;
+    }
+
+    public Provider<Boolean> getDynamicExtension() {
+        return dynamicExtension;
     }
 
 }
