@@ -90,6 +90,8 @@ public class Amp extends Zip {
      * A configurable collection of files that will be added to the {@code /lib} folder.
      *
      * Any JAR files required by the module and the JAR file of the module itself are located here.
+     *
+     * @return A modifiable file collection with all libraries.
      */
     @InputFiles
     @Optional
@@ -105,6 +107,8 @@ public class Amp extends Zip {
      * A configurable collection of files that will be added to the {@code /licenses} folder.
      *
      * If the module requires any third party JARs that specify certain licenses, then those licenses can be located here.
+     *
+     * @return A modifiable file collection with all licenses.
      */
     @InputFiles
     @Optional
@@ -125,6 +129,8 @@ public class Amp extends Zip {
      * It contains metadata about the module, most importantly the id and version of the module that the AMP file contains.
      *
      * For the contents of the file, see <a href="https://docs.alfresco.com/5.1/concepts/dev-extensions-modules-module-properties.html">Module properties file in the Alfresco Developer guide</a>.
+     *
+     * @return The module.properties file
      */
     @InputFile
     public File getModuleProperties() {
@@ -153,6 +159,8 @@ public class Amp extends Zip {
      * This is achieved with the file-mapping.properties file. If this file is not present then the default mapping will be used.
      *
      * For the contents of the file, see <a href="https://docs.alfresco.com/5.1/concepts/dev-extensions-modules-custom-amp.html">Customizing AMP to WAR mapping in the Alfresco Developer guide</a>
+     *
+     * @return The file-mapping.properties file
      */
     @InputFile
     @Optional
@@ -174,11 +182,12 @@ public class Amp extends Zip {
     //</editor-fold>
 
     /**
-     * A configurable collection of files that will be placed in the {@code /config/dynamic-extensions/bundle} directory.
+     * A configurable collection of files that will be placed in the {@code /config/dynamic-extensions/bundles} directory.
      *
      * JAR files in this directory are automatically loaded by the <a href="https://github.com/xenit-eu/dynamic-extensions-for-alfresco">Dynamic Extensions for Alfresco module</a>.
      *
-     * @since  since 0.2.0
+     * @since 0.2.0
+     * @return A modifiable file collection with all dynamic extensions bundles.
      */
     @InputFiles
     @Optional
@@ -195,6 +204,8 @@ public class Amp extends Zip {
      *
      * The {@code /web} directory of an AMP contains custom JSP files and static assets like CSS, images and client-side Javascript.
      *
+     * @param copySpec action that configures the {@link CopySpec} for {@code /web}
+     *
      * @since 0.2.0
      */
     public void web(Action<? super CopySpec> copySpec) {
@@ -209,6 +220,8 @@ public class Amp extends Zip {
      * XML import files or ACPs can also be conveniently located here.
      * Any content that needs to be on the Tomcat classpath can be located here.
      *
+     * @param copySpec action that configures the {@link CopySpec} for {@code /config}
+     *
      * @since 0.2.0
      */
     public void config(Action<? super CopySpec> copySpec) {
@@ -221,11 +234,13 @@ public class Amp extends Zip {
     }
 
     /**
-     * Configures the {@link CopySpec} to copy files to the {@code /config/dynamic-extensions/bundle} directory.
+     * Configures the {@link CopySpec} to copy files to the {@code /config/dynamic-extensions/bundles} directory.
      *
      * JAR files in this directory are automatically loaded by the <a href="https://github.com/xenit-eu/dynamic-extensions-for-alfresco">Dynamic Extensions for Alfresco module</a>.
      *
-     * @deprecated since 0.2.0. Use {@link #getDeBundles()} or {@link #setDeBundles()} instead.
+     * @param configureAction action that configures the {@link CopySpec} for {@code /config/dynamic-extensions/bundles}
+     *
+     * @deprecated since 0.2.0. Use {@link #getDeBundles()} or {@link #setDeBundles(FileCollection)} instead.
      */
     @Deprecated
     public void de(Action<? super CopySpec> configureAction) {
@@ -236,6 +251,7 @@ public class Amp extends Zip {
     //<editor-fold desc="Deprecated getters/setters for web and config">
 
     /**
+     * @return directory that will be copied to the {@code /web} directory
      * @deprecated since 0.2.0 without a replacement.
      */
     @Internal
@@ -249,6 +265,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param web directory that will be copied to the {@code /web} directory
      * @deprecated since 0.2.0. Use {@link #web(Action)} instead.
      */
     @Deprecated
@@ -258,6 +275,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @return directory that will be copied to the {@code /config} directory
      * @deprecated since 0.2.0 without a replacement.
      */
     @Internal
@@ -271,6 +289,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param directory directory that will be copied to the {@code /config} directory
      * @deprecated since 0.2.0. Use {@link #config(Action)} instead.
      */
     @Deprecated
@@ -280,6 +299,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param web supplier of the directory that will be copied to the {@code /web} directory
      * @deprecated since 0.2.0, use {@link #web(Action)} instead.
      */
     @Deprecated
@@ -289,6 +309,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param config supplier of the directory that will be copied to the {@code /config} directory
      * @deprecated since 0.2.0, use {@link #config(Action)} instead.
      */
     @Deprecated
@@ -300,6 +321,7 @@ public class Amp extends Zip {
 
     //<editor-fold desc="Groovy closure support">
     /**
+     * @param web supplier of the directory that will be copied to the {@code /web} directory
      * @deprecated since 0.2.0, use {@link #web(Action)} instead.
      */
     @Deprecated
@@ -308,6 +330,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param config supplier of the directory that will be copied to the {@code /config} directory
      * @deprecated since 0.2.0, use {@link #config(Action)} instead
      */
     @Deprecated
@@ -316,6 +339,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param moduleProperties supplier of the file that will be copied to {@code /module.properties}
      * @see #setModuleProperties(Supplier)
      */
     public void setModuleProperties(Closure<File> moduleProperties) {
@@ -323,6 +347,7 @@ public class Amp extends Zip {
     }
 
     /**
+     * @param fileMappingProperties supplier of the file that will be copied to {@code /file-mapping.properties}
      * @see #setFileMappingProperties(Supplier)
      */
     public void setFileMappingProperties(Closure<File> fileMappingProperties) {
@@ -331,6 +356,8 @@ public class Amp extends Zip {
 
     /**
      * @see #de(Action)
+     * @param configureClosure action that configures the {@link CopySpec} for {@code /config/dynamic-extensions/bundles}
+     * @deprecated since 0.2.0. Use {@link #getDeBundles()} or {@link #setDeBundles(FileCollection)} instead.
      */
     @Deprecated
     public void de(Closure configureClosure) {
