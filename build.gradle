@@ -41,14 +41,26 @@ dependencies {
 task integrationTest(type: Test, group: "verification") {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
-    systemProperty("eu.xenit.gradle.alfrescosdk.deprecation", "false")
     mustRunAfter(test)
+}
+
+tasks.withType(Test) {
+    systemProperty("eu.xenit.gradle.alfrescosdk.deprecation.stacktrace", "false")
+    systemProperty("eu.xenit.gradle.alfrescosdk.deprecation.warnAlways", "true")
+}
+
+javadoc {
+    exclude("**/internal/**")
 }
 
 check.dependsOn(integrationTest)
 
 gradlePlugin {
     plugins {
+        ampBase {
+            id = "eu.xenit.amp-base"
+            implementationClass = "eu.xenit.gradle.alfrescosdk.AmpBasePlugin"
+        }
         amp {
             id = "eu.xenit.amp"
             implementationClass = "eu.xenit.gradle.alfrescosdk.AmpPlugin"
@@ -67,6 +79,9 @@ pluginBundle {
     description = "Gradle plugins and tasks to support Alfresco development"
     tags = ["alfresco"]
     plugins {
+        ampBase {
+            displayName = "Alfresco AMP base plugin"
+        }
         amp {
             displayName = "Alfresco AMP plugin"
         }
