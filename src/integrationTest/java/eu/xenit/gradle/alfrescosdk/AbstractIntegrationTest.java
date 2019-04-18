@@ -36,16 +36,7 @@ public abstract class AbstractIntegrationTest {
                 {"5.1.1"},
                 {"5.0"},
                 {"4.10.3"},
-                {"4.9"},
-                {"4.8.1"},
-                {"4.7"},
-                {"4.6"},
-                {"4.5.1"},
-                {"4.4.1"},
-                {"4.3.1"},
-                {"4.2"},
-                {"4.1"},
-                {"4.0.2"},
+                {"4.10"},
         });
     }
 
@@ -61,7 +52,7 @@ public abstract class AbstractIntegrationTest {
         return GradleRunner.create()
                 .withProjectDir(tempExample)
                 .withGradleVersion(gradleVersion)
-                .withArguments(task, "--stacktrace", "--rerun-tasks", "-i")
+                .withArguments(task, "--stacktrace", "-i")
                 .withPluginClasspath()
                 .withDebug(true)
                 .forwardOutput();

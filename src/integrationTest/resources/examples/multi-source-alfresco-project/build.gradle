@@ -1,0 +1,34 @@
+plugins {
+    id 'eu.xenit.alfresco'
+    id 'eu.xenit.amp'
+}
+
+sourceSets {
+    main {
+
+    }
+    share {
+        amp {
+            module {
+                it.setProperty("module.id", project.name + "-share")
+                it.setProperty("module.version", project.version)
+            }
+        }
+    }
+}
+
+description = "HelloWorld Webscript, very useful"
+version = "0.0.1"
+
+repositories {
+    mavenCentral()
+    jcenter()
+    alfrescoPublic()
+}
+
+
+dependencies {
+    alfrescoProvided "org.alfresco:alfresco-repository:5.2.g"
+    shareAlfrescoProvided "org.alfresco:share:5.2.f:classes"
+}
+
