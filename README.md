@@ -45,7 +45,7 @@ It ensures the libraries are only added to your `compileClasspath`, and that the
 
 ## Example project
 
-You can copy the example project in src/integration-test/resources/examples/simple-alfresco-project.
+You can copy the example project in [src/integrationTest/resources/examples/simple-alfresco-project](https://github.com/xenit-eu/alfresco-gradle-sdk/tree/master/src/integrationTest/resources/examples/simple-alfresco-project).
 You need to change the build.gradle file by adding the versions to the plugins.
 
 ## Plugins
