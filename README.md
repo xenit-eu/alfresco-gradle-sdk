@@ -1,4 +1,7 @@
-# Alfresco Gradle SDK [![Build Status](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk.svg?branch=master)](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk)
+# Alfresco Gradle SDK 
+[![Build Status](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk.svg?branch=master)](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/eu/xenit/alfresco/eu.xenit.alfresco.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=eu.xenit.alfresco)](https://plugins.gradle.org/plugin/eu.xenit.alfresco)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/eu/xenit/amp/eu.xenit.amp.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=eu.xenit.amp)](https://plugins.gradle.org/plugin/eu.xenit.amp)
 
 Gradle plugins and tasks to support Alfresco development
 
