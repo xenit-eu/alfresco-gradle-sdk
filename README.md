@@ -126,21 +126,25 @@ _Defaults:_ If a file exists in `src/${sourceSet.name}/amp/module.properties`, i
 
 _Examples:_
 ```groovy
-amp {
-    // 1.a File based configuration
-    module("path/to/module.properties") 
-    // 1.b File based configuration with a `File`
-    module(project.file("path/to/module.properties"))
-    // 2. Dynamic configuration with a lazily evaluated closure
-    module { 
-        put("module.id", project.name)
-        put("module.version", project.version)
+sourceSets {
+    main {
+        amp {
+            // 1.a File based configuration
+            module("path/to/module.properties") 
+            // 1.b File based configuration with a `File`
+            module(project.file("path/to/module.properties"))
+            // 2. Dynamic configuration with a lazily evaluated closure
+            module { 
+                put("module.id", project.name)
+                put("module.version", project.version)
+            }
+            // 3. Dynamic configuration with an eagerly evaluated map
+            module([ 
+                "module.id": project.name,
+                "module.version": project.version,
+            ])
+        }
     }
-    // 3. Dynamic configuration with an eagerly evaluated map
-    module([ 
-        "module.id": project.name,
-        "module.version": project.version,
-    ])
 }
 ```
 
@@ -167,14 +171,18 @@ _Defaults_: By default the `src/${sourceSet.name}/amp/config` directory is added
 
 _Examples:_
 ```groovy
-amp {
-    // 1. Set single source directory
-    config.srcDir("src/main/amp/otherConfig")
-    // 2. Add a source directory to the existing list
-    config.srcDirs += "src/main/amp/additionalConfig"
-    // 3. With a configuration block
-    config {
-        srcDirs += "src/main/amp/additionalConfig"
+sourceSets {
+    main {
+        amp {
+            // 1. Set single source directory
+            config.srcDir("src/main/amp/otherConfig")
+            // 2. Add a source directory to the existing list
+            config.srcDirs += "src/main/amp/additionalConfig"
+            // 3. With a configuration block
+            config {
+                srcDirs += "src/main/amp/additionalConfig"
+            }
+        }
     }
 }
 ```
@@ -199,11 +207,15 @@ instead of on their conventional location for an Alfresco AMP.
 
 _Examples:_
 ```groovy
-amp {
-    // 1. Package a dynamic extension in an AMP
-    dynamicExtension()
-    // 2. Explicitly create a normal AMP without packaging a dynamic extension
-    dynamicExtension(false)
+sourceSets {
+    main {
+        amp {
+            // 1. Package a dynamic extension in an AMP
+            dynamicExtension()
+            // 2. Explicitly create a normal AMP without packaging a dynamic extension
+            dynamicExtension(false)
+        }
+    }
 }
 ```
 
