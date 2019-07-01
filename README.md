@@ -284,7 +284,7 @@ task amp(type: Amp) {
 ```
 
 #### Publishing
-Since `amp` is a subclass of 'AbstractArchiveTask' it can be passed to the 'artifact' function of the 
+Tasks of the `Amp` type can be passed to the `artifact` function of the [`maven-publish` plugin](https://docs.gradle.org/current/userguide/publishing_maven.html).
 mavenPublish plugin.
 
 _Example:_
