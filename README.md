@@ -283,3 +283,18 @@ task amp(type: Amp) {
 }
 ```
 
+#### Publishing
+Since `amp` is a subclass of 'AbstractArchiveTask' it can be passed to the 'artifact' function of the 
+mavenPublish plugin.
+
+_Example:_
+```groovy
+publishing {
+    publications{
+        maven(MavenPublication) {
+            artifact tasks.amp
+        }
+    }
+}
+```
+
