@@ -283,3 +283,18 @@ task amp(type: Amp) {
 }
 ```
 
+#### Publishing
+Tasks of the `Amp` type can be passed to the `artifact` function of the [`maven-publish` plugin](https://docs.gradle.org/current/userguide/publishing_maven.html).
+This means that an AMP built with the `amp` task can be published in the same way as a `jar` would be published.
+
+_Example:_
+```groovy
+publishing {
+    publications{
+        maven(MavenPublication) {
+            artifact tasks.amp
+        }
+    }
+}
+```
+
