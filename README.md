@@ -258,7 +258,7 @@ The `eu.xenit.gradle.alfrescosdk.tasks.Amp` task type is a subclass of [`Zip`](h
 | `fileMappingProperties` | `File` | The file that will be uses as `/file-mapping.properties` inside the AMP. |
 | `libs`   | `ConfigurableFileCollection` | Collection of files that will be placed inside the `/lib` directory. |
 | `licenses` | `ConfigurableFileCollection` | Collection of files that will be placed inside the `/licenses` directory. |
-| `deLibs` | `ConfigurableFileCollection` | Collection of files that will be placed inside the `/config/dynamic-extensions/bundles` directory and will be loaded by Dynamic Extensions. |
+| `deBundles` | `ConfigurableFileCollection` | Collection of files that will be placed inside the `/config/dynamic-extensions/bundles` directory and will be loaded by Dynamic Extensions. |
 
 | CopySpec | Description |
 | -------- | ----------- |
