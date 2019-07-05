@@ -1,5 +1,6 @@
 package eu.xenit.gradle.alfrescosdk;
 
+import eu.xenit.gradle.alfrescosdk.internal.GradleVersionCheck;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import org.gradle.api.Plugin;
@@ -14,6 +15,8 @@ import org.gradle.plugins.ide.idea.IdeaPlugin;
 
 public class AmpPlugin implements Plugin<Project> {
 
+    public static final String PLUGIN_ID = "eu.xenit.amp";
+
     @Deprecated
     public static final String AMP_CONFIGURATION = "amp";
     @Deprecated
@@ -23,6 +26,8 @@ public class AmpPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        GradleVersionCheck.assertSupportedVersion(PLUGIN_ID);
+
         project.getPluginManager().apply(AmpBasePlugin.class);
         project.getPluginManager().apply(AmpLegacyPlugin.class);
 

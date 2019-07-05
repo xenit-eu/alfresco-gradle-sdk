@@ -1,5 +1,6 @@
 package eu.xenit.gradle.alfrescosdk;
 
+import eu.xenit.gradle.alfrescosdk.internal.GradleVersionCheck;
 import groovy.lang.Closure;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
@@ -24,6 +25,8 @@ public class AlfrescoPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        GradleVersionCheck.assertSupportedVersion(PLUGIN_ID);
+
         this.project = project;
         project.getPluginManager().apply(JavaPlugin.class);
 

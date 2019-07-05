@@ -1,6 +1,7 @@
 package eu.xenit.gradle.alfrescosdk;
 
 import eu.xenit.gradle.alfrescosdk.internal.ConfigurationDispatcher;
+import eu.xenit.gradle.alfrescosdk.internal.GradleVersionCheck;
 import eu.xenit.gradle.alfrescosdk.internal.tasks.DefaultAmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 public class AmpBasePlugin implements Plugin<Project> {
 
     public static final Logger LOGGER = Logging.getLogger(AmpBasePlugin.class);
+    public static final String PLUGIN_ID = "eu.xenit.amp-base";
 
     private final SourceDirectorySetFactory sourceDirectorySetFactory;
     private final ConfigurationDispatcher<DefaultAmpSourceSet> sourceSetConfigurationDispatcher;
@@ -46,6 +48,7 @@ public class AmpBasePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project target) {
+        GradleVersionCheck.assertSupportedVersion(PLUGIN_ID);
         project = target;
         project.getPluginManager().apply(JavaBasePlugin.class);
         configureSourceSetDefaults();
