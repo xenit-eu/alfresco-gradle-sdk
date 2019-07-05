@@ -56,9 +56,9 @@ public class AmpBasePlugin implements Plugin<Project> {
     }
 
     private static Map<String, Object> propertiesToMap(Properties properties) {
-        return properties.stringPropertyNames()
+        return properties.keySet()
                 .stream()
-                .collect(Collectors.toMap(Function.identity(), properties::getProperty));
+                .collect(Collectors.toMap(Object::toString, k -> properties.get(k).toString()));
     }
 
 
