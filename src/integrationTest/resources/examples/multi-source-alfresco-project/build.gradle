@@ -3,22 +3,27 @@ plugins {
     id 'eu.xenit.amp'
 }
 
+version = "0.0.1"
+
 sourceSets {
     main {
-
+        amp {
+            module([
+                "module.id": "${project.name}-repo",
+                "module.version": project.version
+            ])
+        }
     }
     share {
         amp {
             module {
-                it.setProperty("module.id", project.name + "-share")
+                it.setProperty("module.id", "${project.name}-share")
                 it.setProperty("module.version", project.version)
             }
         }
     }
 }
 
-description = "HelloWorld Webscript, very useful"
-version = "0.0.1"
 
 repositories {
     mavenCentral()

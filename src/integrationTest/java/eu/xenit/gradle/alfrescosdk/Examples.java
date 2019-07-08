@@ -2,14 +2,20 @@ package eu.xenit.gradle.alfrescosdk;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Properties;
 import java.util.function.Predicate;
+import org.gradle.util.GUtil;
 import org.junit.Test;
 
 public class Examples extends AbstractIntegrationTest {
@@ -116,6 +122,13 @@ public class Examples extends AbstractIntegrationTest {
         Path packagedJarFile = ampFs.getPath("lib/configured-alfresco-project-0.0.1.jar");
         assertPath(Files::isRegularFile, packagedJarFile);
         assertArrayEquals("Jar inside amp is not identical to jar outside amp", Files.readAllBytes(jarFile), Files.readAllBytes(packagedJarFile));
+
+        Properties moduleProperties = GUtil.loadProperties(Files.newInputStream(ampFs.getPath("module.properties")));
+        assertEquals("configured-alfresco-project", moduleProperties.get("module.id"));
+        assertEquals("configured-alfresco-project", moduleProperties.get("module.title"));
+        assertEquals("0.0.1", moduleProperties.get("module.version"));
+        assertEquals("Content type detection Webscript, very useful", moduleProperties.get("module.description"));
+
         ampFs.close();
 
         FileSystem jarFs = FileSystems.newFileSystem(jarFile, null);
@@ -128,5 +141,28 @@ public class Examples extends AbstractIntegrationTest {
     @Test
     public void multiSourceAlfrescoProject() throws IOException {
         testProjectFolder(EXAMPLES.resolve("multi-source-alfresco-project"), ":assemble");
+
+        Path buildFolder = projectFolder.toPath().resolve("build");
+        Path shareAmpFile = buildFolder.resolve("dist/multi-source-alfresco-project-0.0.1-share.amp");
+
+        assertPath(Files::isRegularFile, shareAmpFile);
+        FileSystem shareAmpFs = FileSystems.newFileSystem(shareAmpFile, null);
+        assertPath(Files::isRegularFile, shareAmpFs.getPath("module.properties"));
+        InputStream shareAmpPropertiesInputStream = Files.newInputStream(shareAmpFs.getPath("module.properties"));
+        Properties shareAmpProperties = GUtil.loadProperties(shareAmpPropertiesInputStream);
+        assertEquals("multi-source-alfresco-project-share", shareAmpProperties.getProperty("module.id"));
+        assertEquals("0.0.1", shareAmpProperties.getProperty("module.version"));
+        shareAmpFs.close();
+
+        Path ampFile = buildFolder.resolve("dist/multi-source-alfresco-project-0.0.1.amp");
+        assertPath(Files::isRegularFile, ampFile);
+        FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
+        assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        InputStream ampPropertiesInputStream = Files.newInputStream(ampFs.getPath("module.properties"));
+        Properties ampProperties = GUtil.loadProperties(ampPropertiesInputStream);
+        assertEquals("multi-source-alfresco-project-repo", ampProperties.getProperty("module.id"));
+        assertEquals("0.0.1", ampProperties.getProperty("module.version"));
+        ampFs.close();
+
     }
 }
