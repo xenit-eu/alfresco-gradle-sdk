@@ -9,10 +9,8 @@ import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 import java.util.function.Predicate;
 import org.gradle.util.GUtil;
@@ -132,10 +130,31 @@ public class Examples extends AbstractIntegrationTest {
         ampFs.close();
 
         FileSystem jarFs = FileSystems.newFileSystem(jarFile, null);
-        assertPath(Files::isRegularFile, jarFs.getPath("eu/xenit/alfresco/gradle/sample/ContentTypeDetectionWebScript.class"));
+        assertPath(Files::isRegularFile,
+                jarFs.getPath("eu/xenit/alfresco/gradle/sample/ContentTypeDetectionWebScript.class"));
         jarFs.close();
 
 
+    }
+
+    @Test
+    public void multiConfigAlfrescoProject() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("multi-config-alfresco-project"));
+
+        Path buildFolder = projectFolder.toPath().resolve("build");
+        Path ampFile = buildFolder.resolve("dist/multi-config-alfresco-project-0.0.1.amp");
+
+        assertPath(Files::isRegularFile, ampFile);
+
+        FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
+        assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::isRegularFile, ampFs.getPath(
+                "config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/contenttypedetection.get.desc.xml"));
+        assertPath(Files::isRegularFile,
+                ampFs.getPath("config/alfresco/module/configured-default-amp/module-context.xml"));
+        assertPath(Files::isRegularFile, ampFs.getPath("config/alfresco-global.properties"));
+
+        ampFs.close();
     }
 
     @Test
