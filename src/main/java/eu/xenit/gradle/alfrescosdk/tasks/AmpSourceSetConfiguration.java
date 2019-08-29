@@ -1,10 +1,12 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
+import org.gradle.api.Action;
+import org.gradle.api.NonNullApi;
+import org.gradle.api.file.SourceDirectorySet;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
-import org.gradle.api.Action;
-import org.gradle.api.NonNullApi;
 
 @NonNullApi
 public interface AmpSourceSetConfiguration {
@@ -28,17 +30,19 @@ public interface AmpSourceSetConfiguration {
 
     AmpSourceSetConfiguration fileMapping(Action<? super Properties> configure);
 
-    AmpSourceDirectories getConfig();
+    SourceDirectorySet getConfig();
 
     default AmpSourceSetConfiguration config(Action <? super AmpSourceDirectories> configure) {
-        configure.execute(getConfig());
+        getConfig().getSourceDirectories().forEach(dir -> {
+//            configure.execute(dir);
+        });
         return this;
     }
 
-    AmpSourceDirectories getWeb();
+    SourceDirectorySet getWeb();
 
     default AmpSourceSetConfiguration web(Action<? super AmpSourceDirectories> configure) {
-        configure.execute(getWeb());
+//        configure.execute(getWeb());
         return this;
     }
 

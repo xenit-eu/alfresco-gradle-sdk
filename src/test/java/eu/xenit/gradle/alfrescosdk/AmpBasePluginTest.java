@@ -1,30 +1,24 @@
 package eu.xenit.gradle.alfrescosdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Properties;
 import org.gradle.api.internal.project.DefaultProject;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.WriteProperties;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.util.GUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 public class AmpBasePluginTest {
     @Rule
@@ -139,13 +133,10 @@ public class AmpBasePluginTest {
                 moduleProperties.setProperty("module.version", "1.0.0");
             });
 
-            ampConfig.web(sourceDirs -> {
-                sourceDirs.srcDir("src/xyz/amp/web");
-            });
+            ampConfig.getConfig().srcDir(Collections.singleton("src/xyz/amp/config"));
+            
+            ampConfig.getWeb().srcDir("src/xyz/amp/web");
 
-            ampConfig.config(sourceDirs -> {
-                sourceDirs.setSrcDirs(Collections.singleton("src/xyz/amp/config"));
-            });
         });
 
         WriteProperties modulePropertiesTask = project.getTasks().withType(WriteProperties.class).findByName("processModuleProperties");
@@ -155,9 +146,11 @@ public class AmpBasePluginTest {
 
         AmpSourceSet ampSourceSet = project.getPlugins().getPlugin(AmpBasePlugin.class).getAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME).get();
 
-        assertEquals(Collections.singleton(project.file("src/xyz/amp/config")), ampSourceSet.getAmp().getConfig().getSrcDirs());
-        assertEquals(new HashSet<>(Arrays.asList(project.file("src/main/amp/web"), project.file("src/xyz/amp/web"))), ampSourceSet.getAmp().getWeb().getSrcDirs());
+//        assertEquals(Collections.singleton(project.file("src/xyz/amp/config")), ampSourceSet.getAmp().getConfig().getSrcDirs());
+        assertTrue(ampSourceSet.getAmp().getConfig().getSrcDirs().contains(project.file("src/xyz/amp/config")));
 
+        assertTrue(ampSourceSet.getAmp().getWeb().getSrcDirs().contains(project.file("src/main/amp/web")));
+        assertTrue(ampSourceSet.getAmp().getWeb().getSrcDirs().contains(project.file("src/xyz/amp/web")));
     }
 
 }
