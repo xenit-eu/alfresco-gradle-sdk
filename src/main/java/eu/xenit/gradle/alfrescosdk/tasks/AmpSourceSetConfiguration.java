@@ -32,19 +32,7 @@ public interface AmpSourceSetConfiguration {
 
     SourceDirectorySet getConfig();
 
-    default AmpSourceSetConfiguration config(Action <? super AmpSourceDirectories> configure) {
-        getConfig().getSourceDirectories().forEach(dir -> {
-//            configure.execute(dir);
-        });
-        return this;
-    }
-
     SourceDirectorySet getWeb();
-
-    default AmpSourceSetConfiguration web(Action<? super AmpSourceDirectories> configure) {
-//        configure.execute(getWeb());
-        return this;
-    }
 
     AmpSourceSetConfiguration dynamicExtension(boolean dynamicExtension);
 

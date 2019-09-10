@@ -22,11 +22,10 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     @Getter private Property<Properties> fileMappingProperties;
     private Property<Boolean> dynamicExtension;
 
-    public DefaultAmpSourceSetConfiguration(Project project, SourceDirectorySetFactory sourceDirectorySetFactory) {
+    public DefaultAmpSourceSetConfiguration(Project project) {
         this.project = project;
 
         // Creates config sourceDir set.
-//        config = new DefaultAmpSourceDirectories(sourceDirectorySetFactory.create("config"));
         config = AmpConfigSourceDirectorySet.create("config", project.getObjects());
 
         //Creates web sourceSir set.
