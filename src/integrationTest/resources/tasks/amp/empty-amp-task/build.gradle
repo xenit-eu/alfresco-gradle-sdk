@@ -1,0 +1,11 @@
+plugins {
+    id 'eu.xenit.amp' apply false
+}
+
+group = 'eu.xenit.gradle.alfrescosdk.test'
+
+task amp(type: eu.xenit.gradle.alfrescosdk.tasks.Amp){
+    moduleProperties = file('module.properties');
+    destinationDir = file("$buildDir/amp")
+    baseName = 'amp'
+}
