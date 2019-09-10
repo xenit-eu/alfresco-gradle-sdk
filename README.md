@@ -298,3 +298,5 @@ publishing {
 }
 ```
 
+### Contributors
+- Bhagya Silva ([@bhagyas](linkedin.com/in/bhagyas)) - [Loftux AB](loftux.com?ref=github)

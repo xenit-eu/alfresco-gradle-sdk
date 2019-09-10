@@ -15,6 +15,7 @@ public final class GradleVersionCheck {
             throw new GradleException("The "+pluginId+" plugin requires at least "+MINIMUM_VERSION+". (You are running "+currentVersion+")");
         }
 
+        //TODO: Check for newer Gradle versions and show relavent errors instead.
     }
 
 }

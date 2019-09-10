@@ -1,33 +1,46 @@
 package eu.xenit.gradle.alfrescosdk.internal.tasks;
 
-import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceDirectories;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
-import java.io.File;
-import java.util.Properties;
+import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
+import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.file.SourceDirectorySetFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.util.GUtil;
 
+import java.io.File;
+import java.util.Properties;
+
 public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfiguration {
 
-    private final DefaultAmpSourceDirectories config;
-    private final DefaultAmpSourceDirectories web;
+    @Getter private final SourceDirectorySet config;
+    @Getter private final SourceDirectorySet web;
     private final Project project;
-    private Property<Properties> moduleProperties;
-    private Property<Properties> fileMappingProperties;
+    @Getter private Property<Properties> moduleProperties;
+    @Getter private Property<Properties> fileMappingProperties;
     private Property<Boolean> dynamicExtension;
 
     public DefaultAmpSourceSetConfiguration(Project project, SourceDirectorySetFactory sourceDirectorySetFactory) {
         this.project = project;
-        config = new DefaultAmpSourceDirectories(sourceDirectorySetFactory.create("config"));
-        web = new DefaultAmpSourceDirectories(sourceDirectorySetFactory.create("web"));
+
+        // Creates config sourceDir set.
+//        config = new DefaultAmpSourceDirectories(sourceDirectorySetFactory.create("config"));
+        config = AmpConfigSourceDirectorySet.create("config", project.getObjects());
+
+        //Creates web sourceSir set.
+        web =  AmpWebSourceDirectorySet.create("web", project.getObjects());
+
+        //alfresco module.properties file
         moduleProperties = project.getObjects().property(Properties.class);
         moduleProperties.set(new Properties());
+
+        //file-mapping properties
         fileMappingProperties = project.getObjects().property(Properties.class);
         fileMappingProperties.set(new Properties());
+
+        //dynamic extension related options.
         dynamicExtension = project.getObjects().property(Boolean.class);
         dynamicExtension.set(false);
     }
@@ -54,10 +67,6 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         return this;
     }
 
-    public Provider<Properties> getModuleProperties() {
-        return moduleProperties;
-    }
-
     @Override
     public AmpSourceSetConfiguration fileMapping(String fileMappingProperties) {
         fileMapping(project.file(fileMappingProperties));
@@ -80,19 +89,6 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         return this;
     }
 
-    public Provider<Properties> getFileMappingProperties() {
-        return fileMappingProperties;
-    }
-
-    @Override
-    public AmpSourceDirectories getConfig() {
-        return config;
-    }
-
-    @Override
-    public AmpSourceDirectories getWeb() {
-        return web;
-    }
 
     @Override
     public AmpSourceSetConfiguration dynamicExtension(boolean dynamicExtension) {

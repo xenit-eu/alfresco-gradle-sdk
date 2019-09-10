@@ -6,12 +6,6 @@ import eu.xenit.gradle.alfrescosdk.internal.tasks.DefaultAmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
-import java.io.File;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
@@ -30,6 +24,12 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.WriteProperties;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.slf4j.Logger;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class AmpBasePlugin implements Plugin<Project> {
 
@@ -68,9 +68,16 @@ public class AmpBasePlugin implements Plugin<Project> {
                     sourceSetConfigurationDispatcher);
             new DslObject(sourceSet).getConvention().getPlugins().put("amp", ampSourceSet);
             String rootDir = "src/"+ampSourceSet.getName()+"/amp";
+
+            //add default config sourceDir
             ampSourceSet.getAmp().getConfig().srcDir(rootDir+"/config");
+
+            //add default web sourceDir
             ampSourceSet.getAmp().getWeb().srcDir(rootDir+"/web");
+
+            //add module.properties
             File moduleProperties = project.file(rootDir+"/module.properties");
+            
             if(moduleProperties.exists()) {
                 ampSourceSet.getAmp().module(moduleProperties);
             } else {
@@ -125,6 +132,7 @@ public class AmpBasePlugin implements Plugin<Project> {
             amp.config(copySpec -> {
                 copySpec.from(ampSourceSet.getAmp().getConfig());
             });
+            
             Provider<Boolean> dynamicExtension = ampSourceSet.getAmp().getDynamicExtension();
             Provider<Configuration> ampLibrariesConfiguration = project.getConfigurations().named(ampSourceSet.getAmpLibrariesConfigurationName());
             Provider<FileCollection> jarOutputs = project.getTasks().named(ampSourceSet.getJarTaskName()).map(t -> t.getOutputs().getFiles());

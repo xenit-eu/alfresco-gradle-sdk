@@ -1,10 +1,11 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
+import org.gradle.api.file.SourceDirectorySet;
+
 import java.io.File;
 import java.util.Set;
-import org.gradle.api.file.FileTree;
 
-public interface AmpSourceDirectories extends FileTree {
+public interface AmpSourceDirectories extends SourceDirectorySet {
     AmpSourceDirectories srcDir(Object srcPaths);
 
     default AmpSourceDirectories srcDirs(Object... srcPaths) {
