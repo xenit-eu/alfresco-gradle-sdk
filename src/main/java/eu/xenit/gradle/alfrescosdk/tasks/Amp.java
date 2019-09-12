@@ -46,11 +46,11 @@ public class Amp extends Zip {
 
     private ConfigurableFileCollection deBundles = getProject().files();
 
-    private final DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");;
+    private final DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");
 
     public Amp() {
-        setExtension(AMP_EXTENSION);
-        setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
+        getArchiveExtension().set(AMP_EXTENSION);
+        getDestinationDirectory().set(getProject().getBuildDir().toPath().resolve("dist").toFile());
         //<editor-fold desc="CopySpec setup">
         ampCopySpec.into("lib", spec -> {
             spec.from((Callable<FileCollection>) () -> getLibs());
