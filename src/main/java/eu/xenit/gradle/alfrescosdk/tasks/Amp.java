@@ -2,11 +2,13 @@ package eu.xenit.gradle.alfrescosdk.tasks;
 
 import groovy.lang.Closure;
 import org.gradle.api.Action;
-import org.gradle.api.file.*;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.CopySpec;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.internal.file.copy.DefaultCopySpec;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
@@ -45,17 +47,7 @@ public class Amp extends Zip {
 
     private ConfigurableFileCollection deBundles = getProject().files();
 
-    private final DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");;
-
-    @Override
-    public DirectoryProperty getDestinationDirectory() {
-        return super.getDestinationDirectory();
-    }
-
-    @Override
-    public Property<String> getArchiveExtension() {
-        return super.getArchiveExtension();
-    }
+    private final DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");
 
     public Amp() {
         getArchiveExtension().set(AMP_EXTENSION);
