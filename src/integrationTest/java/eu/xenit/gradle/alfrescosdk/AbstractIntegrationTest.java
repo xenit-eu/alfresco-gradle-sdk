@@ -33,8 +33,6 @@ public abstract class AbstractIntegrationTest {
                 {"5.2.1"},
                 {"5.1.1"},
                 {"5.0"},
-//                {"4.10.3"},   //compatibility is removed for older versions of gradle.
-//                {"4.10"},
         });
     }
 
