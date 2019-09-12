@@ -1,32 +1,25 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
-import static eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper.warnDeprecationOnce;
-
-import eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper;
 import groovy.lang.Closure;
-import java.io.File;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import org.gradle.api.Action;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.CopySpec;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.file.*;
 import org.gradle.api.internal.file.copy.DefaultCopySpec;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Zip;
-import org.gradle.jvm.tasks.Jar;
 import org.gradle.util.ConfigureUtil;
+
+import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
+
+import static eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper.warnDeprecationOnce;
 
 /**
  * Assembles an AMP archive.
@@ -55,8 +48,8 @@ public class Amp extends Zip {
     private final DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");;
 
     public Amp() {
-        setExtension(AMP_EXTENSION);
-        setDestinationDir(getProject().getBuildDir().toPath().resolve("dist").toFile());
+        getArchiveExtension().set(AMP_EXTENSION);
+        getDestinationDirectory().set(getProject().getBuildDir().toPath().resolve("dist").toFile());
         //<editor-fold desc="CopySpec setup">
         ampCopySpec.into("lib", spec -> {
             spec.from((Callable<FileCollection>) () -> getLibs());
