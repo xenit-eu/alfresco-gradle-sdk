@@ -47,6 +47,16 @@ public class Amp extends Zip {
 
     private final DefaultCopySpec ampCopySpec = (DefaultCopySpec) getRootSpec().addChildBeforeSpec(getMainSpec()).into("");;
 
+    @Override
+    public DirectoryProperty getDestinationDirectory() {
+        return super.getDestinationDirectory();
+    }
+
+    @Override
+    public Property<String> getArchiveExtension() {
+        return super.getArchiveExtension();
+    }
+
     public Amp() {
         getArchiveExtension().set(AMP_EXTENSION);
         getDestinationDirectory().set(getProject().getBuildDir().toPath().resolve("dist").toFile());
