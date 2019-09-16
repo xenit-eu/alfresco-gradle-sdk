@@ -146,7 +146,7 @@ public class AmpBasePluginTest {
 
         AmpSourceSet ampSourceSet = project.getPlugins().getPlugin(AmpBasePlugin.class).getAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME).get();
 
-//        assertEquals(Collections.singleton(project.file("src/xyz/amp/config")), ampSourceSet.getAmp().getConfig().getSrcDirs());
+        assertTrue(ampSourceSet.getAmp().getConfig().getSrcDirs().contains(project.file("src/main/amp/config")));
         assertTrue(ampSourceSet.getAmp().getConfig().getSrcDirs().contains(project.file("src/xyz/amp/config")));
 
         assertTrue(ampSourceSet.getAmp().getWeb().getSrcDirs().contains(project.file("src/main/amp/web")));
