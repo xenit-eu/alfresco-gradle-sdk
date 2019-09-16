@@ -300,4 +300,4 @@ publishing {
 ```
 
 ### Contributors
-- Bhagya Silva ([@bhagyas](linkedin.com/in/bhagyas)) - [Loftux AB](loftux.com?ref=github)
+- Bhagya Silva ([@bhagyas](https://linkedin.com/in/bhagyas)) - [Loftux AB](https://loftux.com?ref=github)
