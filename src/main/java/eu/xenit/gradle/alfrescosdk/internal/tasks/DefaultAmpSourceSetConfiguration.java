@@ -25,7 +25,6 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     private Property<Properties> fileMappingProperties;
     private Property<Boolean> dynamicExtension;
 
-    @Inject
     public DefaultAmpSourceSetConfiguration(Project project) {
         this.project = project;
 
