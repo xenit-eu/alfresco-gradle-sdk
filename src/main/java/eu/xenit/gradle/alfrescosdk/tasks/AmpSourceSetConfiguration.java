@@ -1,15 +1,15 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
+import java.io.File;
+import java.util.Map;
+import java.util.Properties;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.file.SourceDirectorySet;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Properties;
-
 @NonNullApi
 public interface AmpSourceSetConfiguration {
+
     AmpSourceSetConfiguration module(String moduleProperties);
 
     AmpSourceSetConfiguration module(File moduleProperties);
@@ -32,7 +32,17 @@ public interface AmpSourceSetConfiguration {
 
     SourceDirectorySet getConfig();
 
+    default AmpSourceSetConfiguration config(Action<? super SourceDirectorySet> configure) {
+        configure.execute(getConfig());
+        return this;
+    }
+
     SourceDirectorySet getWeb();
+
+    default AmpSourceSetConfiguration web(Action<? super SourceDirectorySet> configure) {
+        configure.execute(getWeb());
+        return this;
+    }
 
     AmpSourceSetConfiguration dynamicExtension(boolean dynamicExtension);
 

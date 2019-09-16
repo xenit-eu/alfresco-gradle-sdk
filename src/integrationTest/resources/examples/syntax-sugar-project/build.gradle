@@ -12,8 +12,8 @@ sourceSets {
             web {
                 srcDir 'src/main/alfrescoAmp/web'
             }
+            module "src/main/alfrescoAmp/module.properties"
         }
-        moduleProperties "src/main/alfrescoAmp/module.properties"
     }
 }
 

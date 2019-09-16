@@ -19,7 +19,7 @@ public class DefaultAmpSourceSet implements AmpSourceSet {
             ConfigurationDispatcher<DefaultAmpSourceSet> configurationDispatcher) {
         this.parentSourceSet = parentSourceSet;
         this.configurationDispatcher = configurationDispatcher;
-        amp = new DefaultAmpSourceSetConfiguration(project);
+        amp = project.getObjects().newInstance(DefaultAmpSourceSetConfiguration.class, project);
     }
 
     @Override
