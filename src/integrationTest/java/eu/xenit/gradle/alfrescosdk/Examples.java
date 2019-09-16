@@ -184,4 +184,41 @@ public class Examples extends AbstractIntegrationTest {
         ampFs.close();
 
     }
+
+    @Test
+    public void syntaxSugarProject() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("syntax-sugar-project"));
+
+        Path buildFolder = projectFolder.toPath().resolve("build");
+        Path ampFile = buildFolder.resolve("dist/syntax-sugar-project-0.0.1.amp");
+        Path jarFile = buildFolder.resolve("libs/syntax-sugar-project-0.0.1.jar");
+
+        assertPath(Files::isRegularFile, ampFile);
+        assertPath(Files::isRegularFile, jarFile);
+
+        FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
+        assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/contenttypedetection.get.desc.xml"));
+        assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/module/configured-default-amp/module-context.xml"));
+        assertPath(Files::isRegularFile,ampFs.getPath("web/index.html"));
+        assertPath(Files::isRegularFile, ampFs.getPath("lib/tika-core-1.20.jar"));
+        Path packagedJarFile = ampFs.getPath("lib/syntax-sugar-project-0.0.1.jar");
+        assertPath(Files::isRegularFile, packagedJarFile);
+        assertArrayEquals("Jar inside amp is not identical to jar outside amp", Files.readAllBytes(jarFile), Files.readAllBytes(packagedJarFile));
+
+        Properties moduleProperties = GUtil.loadProperties(Files.newInputStream(ampFs.getPath("module.properties")));
+        assertEquals("syntax-sugar-project", moduleProperties.get("module.id"));
+        assertEquals("syntax-sugar-project", moduleProperties.get("module.title"));
+        assertEquals("0.0.1", moduleProperties.get("module.version"));
+        assertEquals("Content type detection Webscript, very useful", moduleProperties.get("module.description"));
+
+        ampFs.close();
+
+        FileSystem jarFs = FileSystems.newFileSystem(jarFile, null);
+        assertPath(Files::isRegularFile,
+                jarFs.getPath("eu/xenit/alfresco/gradle/sample/ContentTypeDetectionWebScript.class"));
+        jarFs.close();
+
+
+    }
 }
