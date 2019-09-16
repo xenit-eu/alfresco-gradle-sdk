@@ -3,8 +3,6 @@ package eu.xenit.gradle.alfrescosdk.internal.tasks;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import java.util.Properties;
-import javax.inject.Inject;
-import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.SourceDirectorySet;
@@ -14,16 +12,12 @@ import org.gradle.util.GUtil;
 
 public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfiguration {
 
-    @Getter
     private final SourceDirectorySet config;
-    @Getter
     private final SourceDirectorySet web;
     private final Project project;
-    @Getter
-    private Property<Properties> moduleProperties;
-    @Getter
-    private Property<Properties> fileMappingProperties;
-    private Property<Boolean> dynamicExtension;
+    private final Property<Properties> moduleProperties;
+    private final Property<Properties> fileMappingProperties;
+    private final Property<Boolean> dynamicExtension;
 
     public DefaultAmpSourceSetConfiguration(Project project) {
         this.project = project;
@@ -69,6 +63,10 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         return this;
     }
 
+    public Provider<Properties> getModuleProperties() {
+        return moduleProperties;
+    }
+
     @Override
     public AmpSourceSetConfiguration fileMapping(String fileMappingProperties) {
         fileMapping(project.file(fileMappingProperties));
@@ -92,6 +90,10 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     }
 
 
+    public Provider<Properties> getFileMappingProperties() {
+        return fileMappingProperties;
+    }
+
     @Override
     public AmpSourceSetConfiguration dynamicExtension(boolean dynamicExtension) {
         this.dynamicExtension.set(dynamicExtension);
@@ -102,4 +104,13 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         return dynamicExtension;
     }
 
+    @Override
+    public SourceDirectorySet getConfig() {
+        return config;
+    }
+
+    @Override
+    public SourceDirectorySet getWeb() {
+        return web;
+    }
 }
