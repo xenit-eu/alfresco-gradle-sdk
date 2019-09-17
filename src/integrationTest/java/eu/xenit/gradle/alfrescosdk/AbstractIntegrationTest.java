@@ -1,7 +1,5 @@
 package eu.xenit.gradle.alfrescosdk;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,7 +8,6 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -31,12 +28,13 @@ public abstract class AbstractIntegrationTest {
     @Parameters(name = "Gradle v{0}")
     public static Collection<Object[]> testData() {
         return Arrays.asList(new Object[][]{
+                {"5.6.2"},
+                {"5.5.1"},
+                {"5.4.1"},
                 {"5.3.1"},
                 {"5.2.1"},
                 {"5.1.1"},
                 {"5.0"},
-                {"4.10.3"},
-                {"4.10"},
         });
     }
 
@@ -45,12 +43,15 @@ public abstract class AbstractIntegrationTest {
     }
 
     private GradleRunner createRunner(Path projectFolder, String task) throws IOException {
-        File tempExample = testFolder.newFolder(projectFolder.getFileName().toString());
-        this.projectFolder = tempExample;
-        FileUtils.copyDirectory(projectFolder.toFile(), tempExample);
-        System.out.println("Executing test build for example " + tempExample.getName());
+        Path tempExample = getTempCopy(projectFolder);
+        return createRunnerInPlace(tempExample, task);
+    }
+
+    private GradleRunner createRunnerInPlace(Path tempExample, String task) {
+        File tempExampleFile = tempExample.toFile();
+        System.out.println("Executing test build for example " + tempExampleFile.getName());
         return GradleRunner.create()
-                .withProjectDir(tempExample)
+                .withProjectDir(tempExampleFile)
                 .withGradleVersion(gradleVersion)
                 .withArguments(task, "--stacktrace", "-i")
                 .withPluginClasspath()
@@ -58,8 +59,19 @@ public abstract class AbstractIntegrationTest {
                 .forwardOutput();
     }
 
+    protected Path getTempCopy(Path projectFolder) throws IOException {
+        File tempExample = testFolder.newFolder(projectFolder.getFileName().toString());
+        this.projectFolder = tempExample;
+        FileUtils.copyDirectory(projectFolder.toFile(), tempExample);
+        return tempExample.toPath();
+    }
+
     protected BuildResult testProjectFolder(Path projectFolder, String task) throws IOException {
         return createRunner(projectFolder, task).build();
+    }
+
+    protected BuildResult testProjectFolderInPlace(Path projectFolder, String task) throws IOException {
+        return createRunnerInPlace(projectFolder, task).build();
     }
 
     protected BuildResult testProjectFolder(Path projectFolder) throws IOException {

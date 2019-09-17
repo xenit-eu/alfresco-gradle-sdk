@@ -35,6 +35,9 @@ public class AlfrescoPlugin implements Plugin<Project> {
         project.getPlugins().withType(JavaBasePlugin.class, javaBasePlugin -> {
             SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
 
+            /**
+             * Adds the sourceSets to the default main SourceSet.
+             */
             sourceSets.all(sourceSet -> {
                 if (sourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
                     registerAlfrescoProvided(sourceSet);
@@ -75,6 +78,9 @@ public class AlfrescoPlugin implements Plugin<Project> {
         return alfrescoProvided;
     }
 
+    /**
+     * Adds Alfresco public repository to the build
+     */
     private void configureRepository() {
         RepositoryHandler repositories = project.getRepositories();
         new DslObject(repositories).getExtensions().add("alfrescoPublic", new AlfrescoPublicRepositoryConvention(repositories));

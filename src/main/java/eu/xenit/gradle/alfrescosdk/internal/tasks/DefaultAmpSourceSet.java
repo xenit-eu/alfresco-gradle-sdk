@@ -6,7 +6,6 @@ import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
-import org.gradle.api.internal.file.SourceDirectorySetFactory;
 import org.gradle.api.tasks.SourceSet;
 
 @NonNullApi
@@ -16,11 +15,10 @@ public class DefaultAmpSourceSet implements AmpSourceSet {
     private final ConfigurationDispatcher<DefaultAmpSourceSet> configurationDispatcher;
 
     public DefaultAmpSourceSet(SourceSet parentSourceSet, Project project,
-            SourceDirectorySetFactory sourceDirectorySetFactory,
             ConfigurationDispatcher<DefaultAmpSourceSet> configurationDispatcher) {
         this.parentSourceSet = parentSourceSet;
         this.configurationDispatcher = configurationDispatcher;
-        amp = new DefaultAmpSourceSetConfiguration(project, sourceDirectorySetFactory);
+        amp = new DefaultAmpSourceSetConfiguration(project);
     }
 
     @Override
