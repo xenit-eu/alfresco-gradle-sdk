@@ -7,7 +7,7 @@ public final class GradleVersionCheck {
     private GradleVersionCheck() {
 
     }
-    private static final GradleVersion MINIMUM_VERSION = GradleVersion.version("5.0");
+    private static final GradleVersion MINIMUM_VERSION = GradleVersion.version("5.1");
     public static void assertSupportedVersion(String pluginId) {
         GradleVersion currentVersion = GradleVersion.current();
 
