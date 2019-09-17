@@ -6,7 +6,6 @@ import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Project;
-import org.gradle.api.internal.file.SourceDirectorySetFactory;
 import org.gradle.api.tasks.SourceSet;
 
 @NonNullApi
