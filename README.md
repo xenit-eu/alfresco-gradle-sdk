@@ -13,8 +13,8 @@ Much additional configuration is possible to tailor the project to your needs.
 
 ```groovy
 plugins {
-    id 'eu.xenit.alfresco' version "0.2.0" // Have a look at https://plugins.gradle.org/plugin/eu.xenit.alfresco for the latest version
-    id 'eu.xenit.amp' version "0.2.0"
+    id 'eu.xenit.alfresco' version "1.0.0" // Have a look at https://plugins.gradle.org/plugin/eu.xenit.alfresco for the latest version
+    id 'eu.xenit.amp' version "1.0.0"
 }
 ```
 
