@@ -41,6 +41,7 @@ dependencies {
 }
 
 task integrationTest(type: Test, group: "verification") {
+    inputs.files fileTree(dir: "$project.projectDir/src/integrationTest", exclude: "**/.gradle")
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     mustRunAfter(test)
