@@ -28,6 +28,12 @@ public abstract class AbstractIntegrationTest {
 
     @Parameters(name = "Gradle v{0}")
     public static Collection<Object[]> testData() {
+        String forceGradleVersion = System.getProperty("eu.xenit.gradle.alfrescosdk.integration.useGradleVersion");
+        if (forceGradleVersion != null) {
+            return Arrays.asList(new Object[][]{
+                    {forceGradleVersion},
+            });
+        }
         return Arrays.asList(new Object[][]{
                 {"6.0.1"},
                 {"5.6.4"},
@@ -50,14 +56,17 @@ public abstract class AbstractIntegrationTest {
 
     private GradleRunner createRunnerInPlace(Path tempExample, String task) {
         File tempExampleFile = tempExample.toFile();
-        System.out.println("Executing test build for example " + tempExampleFile.getName());
-        return GradleRunner.create()
+        GradleRunner runner = GradleRunner.create()
                 .withProjectDir(tempExampleFile)
-                .withGradleVersion(gradleVersion)
                 .withArguments(task, "--stacktrace", "-i")
                 .withPluginClasspath()
                 .withDebug(true)
                 .forwardOutput();
+
+        if (System.getProperty("eu.xenit.gradle.integration.useGradleVersion") == null) {
+            return runner.withGradleVersion(gradleVersion);
+        }
+        return runner;
     }
 
     protected Path getTempCopy(Path projectFolder) throws IOException {

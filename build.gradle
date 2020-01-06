@@ -39,12 +39,17 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
-
+import org.gradle.util.GradleVersion
 task integrationTest(type: Test, group: "verification") {
     inputs.files fileTree(dir: "$project.projectDir/src/integrationTest", exclude: "**/.gradle")
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     mustRunAfter(test)
+    doFirst {
+        if (gradle.startParameter.offline) {
+            systemProperty "eu.xenit.gradle.alfrescosdk.integration.useGradleVersion", GradleVersion.current().version
+        }
+    }
 }
 
 tasks.withType(Test) {
@@ -68,7 +73,7 @@ gradlePlugin {
             id = "eu.xenit.amp"
             implementationClass = "eu.xenit.gradle.alfrescosdk.AmpPlugin"
         }
-        
+
         alfresco {
             id = "eu.xenit.alfresco"
             implementationClass = "eu.xenit.gradle.alfrescosdk.AlfrescoPlugin"
