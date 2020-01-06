@@ -1,18 +1,8 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "eu.xenit.de:gradle-plugin:1.7.6"
-    }
-}
-
 plugins {
+    id 'eu.xenit.de' version '2.0.1'
     id 'eu.xenit.alfresco'
     id 'eu.xenit.amp'
 }
-
-apply plugin: 'alfresco-dynamic-extension'
 
 ampConfig {
     dynamicExtension = true

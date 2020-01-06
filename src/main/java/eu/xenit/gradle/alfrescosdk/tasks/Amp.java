@@ -40,9 +40,9 @@ public class Amp extends Zip {
     @Deprecated
     private Supplier<File> config;
 
-    private RegularFileProperty moduleProperties = getProject().getLayout().fileProperty();
+    private RegularFileProperty moduleProperties = getProject().getObjects().fileProperty();
 
-    private RegularFileProperty fileMappingProperties = getProject().getLayout().fileProperty();
+    private RegularFileProperty fileMappingProperties = getProject().getObjects().fileProperty();
 
     private ConfigurableFileCollection deBundles = getProject().files();
 

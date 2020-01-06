@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.function.Predicate;
 import org.gradle.util.GUtil;
+import org.gradle.util.GradleVersion;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class Examples extends AbstractIntegrationTest {
@@ -52,6 +54,9 @@ public class Examples extends AbstractIntegrationTest {
 
     @Test
     public void testLegacyDeProject() throws IOException {
+        // Gradle 5.1 has problems with memory usage with the bnd plugin
+        Assume.assumeTrue("Gradle version >= 5.2",
+                GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("5.2")) >= 0);
         testProjectFolder(EXAMPLES.resolve("legacy-de-project"));
 
         Path buildFolder = projectFolder.toPath().resolve("build");
@@ -77,6 +82,9 @@ public class Examples extends AbstractIntegrationTest {
 
     @Test
     public void testSimpleDeProject() throws IOException {
+        // Gradle 5.1 has problems with memory usage with the bnd plugin
+        Assume.assumeTrue("Gradle version >= 5.2",
+                GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("5.2")) >= 0);
         testProjectFolder(EXAMPLES.resolve("simple-de-project"));
 
         Path buildFolder = projectFolder.toPath().resolve("build");

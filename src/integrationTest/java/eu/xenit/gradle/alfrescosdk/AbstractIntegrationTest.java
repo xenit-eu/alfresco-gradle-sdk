@@ -17,6 +17,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public abstract class AbstractIntegrationTest {
+
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
@@ -28,7 +29,8 @@ public abstract class AbstractIntegrationTest {
     @Parameters(name = "Gradle v{0}")
     public static Collection<Object[]> testData() {
         return Arrays.asList(new Object[][]{
-                {"5.6.2"},
+                {"6.0.1"},
+                {"5.6.4"},
                 {"5.5.1"},
                 {"5.4.1"},
                 {"5.3.1"},

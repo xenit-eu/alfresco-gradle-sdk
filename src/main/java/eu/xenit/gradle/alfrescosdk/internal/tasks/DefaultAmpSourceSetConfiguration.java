@@ -2,10 +2,13 @@ package eu.xenit.gradle.alfrescosdk.internal.tasks;
 
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.util.GUtil;
@@ -15,8 +18,8 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     private final SourceDirectorySet config;
     private final SourceDirectorySet web;
     private final Project project;
-    private final Property<Properties> moduleProperties;
-    private final Property<Properties> fileMappingProperties;
+    private final MapProperty<String, String> moduleProperties;
+    private final MapProperty<String, String> fileMappingProperties;
     private final Property<Boolean> dynamicExtension;
 
     public DefaultAmpSourceSetConfiguration(Project project) {
@@ -29,12 +32,10 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         web = project.getObjects().sourceDirectorySet("web", "Alfresco AMP web");
 
         //alfresco module.properties file
-        moduleProperties = project.getObjects().property(Properties.class);
-        moduleProperties.set(new Properties());
+        moduleProperties = project.getObjects().mapProperty(String.class, String.class).empty();
 
         //file-mapping properties
-        fileMappingProperties = project.getObjects().property(Properties.class);
-        fileMappingProperties.set(new Properties());
+        fileMappingProperties = project.getObjects().mapProperty(String.class, String.class).empty();
 
         //dynamic extension related options.
         dynamicExtension = project.getObjects().property(Boolean.class);
@@ -49,8 +50,9 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
 
     @Override
     public AmpSourceSetConfiguration module(File moduleProperties) {
-        this.moduleProperties.set(project.provider(() -> GUtil.loadProperties(moduleProperties)));
-        return this;
+        return module(properties -> {
+            properties.putAll(GUtil.loadProperties(moduleProperties));
+        });
     }
 
     @Override
@@ -58,12 +60,12 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         moduleProperties.set(project.provider(() -> {
             Properties newProperties = new Properties();
             configure.execute(newProperties);
-            return newProperties;
+            return Collections.checkedMap((Map<String, String>) (Map) newProperties, String.class, String.class);
         }));
         return this;
     }
 
-    public Provider<Properties> getModuleProperties() {
+    public MapProperty<String, String> getModuleProperties() {
         return moduleProperties;
     }
 
@@ -75,8 +77,9 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
 
     @Override
     public AmpSourceSetConfiguration fileMapping(File fileMappingProperties) {
-        this.fileMappingProperties.set(project.provider(() -> GUtil.loadProperties(fileMappingProperties)));
-        return this;
+        return fileMapping(properties -> {
+            properties.putAll(GUtil.loadProperties(fileMappingProperties));
+        });
     }
 
     @Override
@@ -84,13 +87,13 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
         fileMappingProperties.set(project.provider(() -> {
             Properties newProperties = new Properties();
             configure.execute(newProperties);
-            return newProperties;
+            return Collections.checkedMap((Map<String, String>) (Map) newProperties, String.class, String.class);
         }));
         return this;
     }
 
 
-    public Provider<Properties> getFileMappingProperties() {
+    public MapProperty<String, String> getFileMappingProperties() {
         return fileMappingProperties;
     }
 
