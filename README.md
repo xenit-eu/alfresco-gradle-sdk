@@ -136,8 +136,8 @@ sourceSets {
             module(project.file("path/to/module.properties"))
             // 2. Dynamic configuration with a lazily evaluated closure
             module { 
-                put("module.id", project.name)
-                put("module.version", project.version)
+                it.put("module.id", project.name)
+                it.put("module.version", project.version)
             }
             // 3. Dynamic configuration with an eagerly evaluated map
             module([ 
