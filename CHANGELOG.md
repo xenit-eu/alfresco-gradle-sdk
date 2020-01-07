@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## Version 1.0.1 - 2020-01-07
+
 ### Fixed
 
  * [#33](https://github.com/xenit-eu/alfresco-gradle-sdk/pull/33) Support Gradle 6.0
