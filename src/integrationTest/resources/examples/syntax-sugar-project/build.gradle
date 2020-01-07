@@ -13,6 +13,7 @@ sourceSets {
                 srcDir 'src/main/alfrescoAmp/web'
             }
             module "src/main/alfrescoAmp/module.properties"
+            fileMapping(['include.default': 'true'])
         }
     }
 }

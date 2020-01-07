@@ -5,6 +5,7 @@
 ### Fixed
 
  * [#33](https://github.com/xenit-eu/alfresco-gradle-sdk/pull/33) Support Gradle 6.0
+ * [#23](https://github.com/xenit-eu/alfresco-gradle-sdk/issues/23) Do not add empty `file-mapping.properties` in an amp
 
 ## Version 1.0.0 - 2019-09-19
 

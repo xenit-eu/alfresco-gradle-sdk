@@ -40,6 +40,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("file-mapping.properties"));
         assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/helloworld.get.desc.xml"));
         assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/module/example-default-amp/module-context.xml"));
         Path packagedJarFile = ampFs.getPath("lib/simple-alfresco-project-0.0.1.jar");
@@ -69,6 +70,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("file-mapping.properties"));
         assertPath(Files::notExists, ampFs.getPath("lib/legacy-de-project-0.0.1.jar"));
         Path packagedJarFile = ampFs.getPath("config/dynamic-extensions/bundles/legacy-de-project-0.0.1.jar");
         assertPath(Files::isRegularFile, packagedJarFile);
@@ -97,6 +99,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("file-mapping.properties"));
         assertPath(Files::notExists, ampFs.getPath("lib/simple-de-project-0.0.1.jar"));
         Path packagedJarFile = ampFs.getPath("config/dynamic-extensions/bundles/simple-de-project-0.0.1.jar");
         assertPath(Files::isRegularFile, packagedJarFile);
@@ -121,6 +124,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("file-mapping.properties"));
         assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/contenttypedetection.get.desc.xml"));
         assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/module/configured-default-amp/module-context.xml"));
         assertPath(Files::isRegularFile,ampFs.getPath("web/index.html"));
@@ -156,6 +160,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("file-mapping.properties"));
         assertPath(Files::isRegularFile, ampFs.getPath(
                 "config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/contenttypedetection.get.desc.xml"));
         assertPath(Files::isRegularFile,
@@ -175,6 +180,7 @@ public class Examples extends AbstractIntegrationTest {
         assertPath(Files::isRegularFile, shareAmpFile);
         FileSystem shareAmpFs = FileSystems.newFileSystem(shareAmpFile, null);
         assertPath(Files::isRegularFile, shareAmpFs.getPath("module.properties"));
+        assertPath(Files::notExists, shareAmpFs.getPath("file-mapping.properties"));
         InputStream shareAmpPropertiesInputStream = Files.newInputStream(shareAmpFs.getPath("module.properties"));
         Properties shareAmpProperties = GUtil.loadProperties(shareAmpPropertiesInputStream);
         assertEquals("multi-source-alfresco-project-share", shareAmpProperties.getProperty("module.id"));
@@ -185,6 +191,7 @@ public class Examples extends AbstractIntegrationTest {
         assertPath(Files::isRegularFile, ampFile);
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::notExists, ampFs.getPath("file-mapping.properties"));
         InputStream ampPropertiesInputStream = Files.newInputStream(ampFs.getPath("module.properties"));
         Properties ampProperties = GUtil.loadProperties(ampPropertiesInputStream);
         assertEquals("multi-source-alfresco-project-repo", ampProperties.getProperty("module.id"));
@@ -206,6 +213,7 @@ public class Examples extends AbstractIntegrationTest {
 
         FileSystem ampFs = FileSystems.newFileSystem(ampFile, null);
         assertPath(Files::isRegularFile, ampFs.getPath("module.properties"));
+        assertPath(Files::isRegularFile, ampFs.getPath("file-mapping.properties"));
         assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/extension/templates/webscripts/eu/xenit/alfresco/gradle/sample/contenttypedetection.get.desc.xml"));
         assertPath(Files::isRegularFile,ampFs.getPath("config/alfresco/module/configured-default-amp/module-context.xml"));
         assertPath(Files::isRegularFile,ampFs.getPath("web/index.html"));
@@ -219,6 +227,9 @@ public class Examples extends AbstractIntegrationTest {
         assertEquals("syntax-sugar-project", moduleProperties.get("module.title"));
         assertEquals("0.0.1", moduleProperties.get("module.version"));
         assertEquals("Content type detection Webscript, very useful", moduleProperties.get("module.description"));
+
+        Properties fileMappingProperties = GUtil.loadProperties(Files.newInputStream(ampFs.getPath("file-mapping.properties")));
+        assertEquals("true", fileMappingProperties.get("include.default"));
 
         ampFs.close();
 

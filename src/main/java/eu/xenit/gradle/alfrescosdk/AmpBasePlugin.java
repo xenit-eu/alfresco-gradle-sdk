@@ -129,8 +129,13 @@ public class AmpBasePlugin implements Plugin<Project> {
                     () -> project.getTasks().getByName(ampSourceSet.getModulePropertiesTaskName()).getOutputs()
                             .getFiles().getSingleFile());
             amp.setFileMappingProperties(
-                    () -> project.getTasks().getByName(ampSourceSet.getFileMappingPropertiesTaskName()).getOutputs()
-                            .getFiles().getSingleFile());
+                    () -> {
+                        WriteProperties fileMappingTask = project.getTasks().withType(WriteProperties.class).getByName(ampSourceSet.getFileMappingPropertiesTaskName());
+                        if(fileMappingTask.getProperties().isEmpty()) {
+                            return null;
+                        }
+                        return fileMappingTask.getOutputs().getFiles().getSingleFile();
+                    });
             amp.web(copySpec -> {
                 copySpec.from(ampSourceSet.getAmp().getWeb());
             });
