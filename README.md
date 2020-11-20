@@ -1,5 +1,5 @@
 # Alfresco Gradle SDK 
-[![Build Status](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk.svg?branch=master)](https://travis-ci.org/xenit-eu/alfresco-gradle-sdk)
+[![CI](https://github.com/xenit-eu/alfresco-gradle-sdk/workflows/CI/badge.svg)](https://github.com/xenit-eu/alfresco-gradle-sdk/actions?query=workflow%3ACI+branch%3Amaster)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/eu/xenit/alfresco/eu.xenit.alfresco.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=eu.xenit.alfresco)](https://plugins.gradle.org/plugin/eu.xenit.alfresco)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/eu/xenit/amp/eu.xenit.amp.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=eu.xenit.amp)](https://plugins.gradle.org/plugin/eu.xenit.amp)
 
