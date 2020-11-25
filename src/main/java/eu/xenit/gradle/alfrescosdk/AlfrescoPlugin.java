@@ -1,14 +1,11 @@
 package eu.xenit.gradle.alfrescosdk;
 
 import eu.xenit.gradle.alfrescosdk.internal.GradleVersionCheck;
-import groovy.lang.Closure;
+import eu.xenit.gradle.alfrescosdk.internal.RepositoryHandlerExtensions;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
-import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -19,7 +16,6 @@ public class AlfrescoPlugin implements Plugin<Project> {
 
     public static final String ALFRESCO_PROVIDED = "alfrescoProvided";
     public static final String PLUGIN_ID = "eu.xenit.alfresco";
-    public static final String ALFRESCO_REPOSITORY_PUBLIC = "https://artifacts.alfresco.com/nexus/content/groups/public/";
 
     private Project project;
 
@@ -82,24 +78,6 @@ public class AlfrescoPlugin implements Plugin<Project> {
      * Adds Alfresco public repository to the build
      */
     private void configureRepository() {
-        RepositoryHandler repositories = project.getRepositories();
-        new DslObject(repositories).getExtensions().add("alfrescoPublic", new AlfrescoPublicRepositoryConvention(repositories));
-    }
-
-    public static class AlfrescoPublicRepositoryConvention extends Closure<MavenArtifactRepository> {
-
-        private final RepositoryHandler repositories;
-
-        private AlfrescoPublicRepositoryConvention(RepositoryHandler repositories) {
-            super(repositories);
-            this.repositories = repositories;
-        }
-
-        public MavenArtifactRepository doCall() {
-            return repositories.maven(repo -> {
-                repo.setUrl(ALFRESCO_REPOSITORY_PUBLIC);
-                repo.setName("Alfresco Public");
-            });
-        }
+        RepositoryHandlerExtensions.apply(project.getRepositories(), project);
     }
 }
