@@ -56,14 +56,65 @@ You need to change the build.gradle file by adding the versions to the plugins.
 
 ### The `eu.xenit.alfresco` plugin
 
-The ```eu.xenit.alfresco``` plugin introduces the ```alfrescoProvided```
-configuration that makes it possible to define Alfresco dependencies
-that are already provided in the Alfresco war. These provided dependencies are used for compilation,
-but are not added as runtime dependencies, as they are already provided by Alfresco itself. These dependencies are available
-when running unit tests.
+The ```eu.xenit.alfresco``` plugin introduces the ```alfrescoProvided``` configuration and `alfrescoPublic()` and `alfrescoEnterprise()` maven repositories.
+
+#### `alfrescoProvided` configuration
+
+This configuration that makes it possible to define Alfresco dependencies that are already provided in the Alfresco war.
+These provided dependencies are used for compilation, but are not added as runtime dependencies, as they are already provided by Alfresco itself.
+
+Contrary to `compileOnly` dependencies, `alfrescoProvided` dependencies are available when running unit tests.
 
 A `${sourceSet.name}AlfrescoProvided` configuration is also set up for all the other sourcesets that have enabled the `amp` configuration.
 These are not automatically attached to the dependencies of a test sourceset.
+
+<details>
+<summary>Example</summary>
+
+```groovy
+dependencies {
+    alfrescoProvided 'org.alfresco:repository-repository:5.2.g'
+}
+```
+
+</details>
+
+#### `alfrescoPublic()` and `alfrescoEnterprise()` repositories
+
+These are shorthand notations to easily add the Alfresco maven repositories to your build.
+
+These methods can also be used as a block, where the repository can be configured as in the [`maven {}` block](https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.dsl.RepositoryHandler.html#org.gradle.api.artifacts.dsl.RepositoryHandler:maven(org.gradle.api.Action)).
+
+For the `alfrescoEnterprise()` repository, credentials can automatically be configured with the `org.alfresco.artifacts.username` and `org.alfresco.artifacts.password` properties.
+If these properties are not present, credentials will have to be specified manually.
+
+<details>
+<summary>Examples</summary>
+
+```groovy
+repositories {
+    alfrescoPublic()
+}
+```
+
+```groovy
+repositories {
+    alfrescoEnterprise()
+}
+```
+
+```groovy
+repositories {
+    alfrescoEnterprise {
+        credentials {
+            username 'my-username'
+            password 'my-password'
+        }
+    }
+}
+```
+
+</details>
 
 ### The `eu.xenit.amp` plugin
 
@@ -83,6 +134,9 @@ The amp base plugin creates and configures an `amp` task for each sourceset that
 #### Configuration
 
 Creating an amp from a sourceset can be enabled and configured by using an `amp` block inside a sourceset.
+
+<details>
+<summary>Example with default configuration</summary>
 
 ```groovy
 sourceSets {
@@ -114,6 +168,8 @@ sourceSets {
     }
 }
 ```
+
+</details>
 
 ##### `module`
 
