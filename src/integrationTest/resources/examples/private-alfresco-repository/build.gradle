@@ -1,0 +1,20 @@
+plugins {
+    id 'eu.xenit.alfresco'
+}
+
+repositories {
+    alfrescoEnterprise()
+    alfrescoEnterprise {
+        name "AlfrescoEnterpriseCredentials"
+        credentials {
+            username 'XXX'
+            password 'YYY'
+        }
+    }
+}
+
+
+afterEvaluate {
+    assert repositories.AlfrescoEnterprise
+    assert repositories.AlfrescoEnterpriseCredentials.credentials.username == 'XXX'
+}

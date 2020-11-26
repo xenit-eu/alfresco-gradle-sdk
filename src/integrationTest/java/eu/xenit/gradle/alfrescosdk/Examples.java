@@ -240,4 +240,9 @@ public class Examples extends AbstractIntegrationTest {
 
 
     }
+
+    @Test
+    public void privateAlfrescoRepository() throws IOException {
+        testProjectFolder(EXAMPLES.resolve("private-alfresco-repository"), ":tasks");
+    }
 }
