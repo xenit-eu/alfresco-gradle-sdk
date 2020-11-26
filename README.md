@@ -59,7 +59,7 @@ You need to change the build.gradle file by adding the versions to the plugins.
 The ```eu.xenit.alfresco``` plugin introduces the ```alfrescoProvided```
 configuration that makes it possible to define Alfresco dependencies
 that are already provided in the Alfresco war. These provided dependencies are used for compilation,
-but are not added as runtime dependencies, as they are already provided by alfresco itself. These dependencies are available
+but are not added as runtime dependencies, as they are already provided by Alfresco itself. These dependencies are available
 when running unit tests.
 
 A `${sourceSet.name}AlfrescoProvided` configuration is also set up for all the other sourcesets that have enabled the `amp` configuration.

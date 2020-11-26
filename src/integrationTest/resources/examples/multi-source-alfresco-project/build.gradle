@@ -27,7 +27,6 @@ sourceSets {
 
 repositories {
     mavenCentral()
-    jcenter()
     alfrescoPublic()
 }
 
