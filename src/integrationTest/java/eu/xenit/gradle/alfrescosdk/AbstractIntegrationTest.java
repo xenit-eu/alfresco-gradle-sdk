@@ -35,6 +35,13 @@ public abstract class AbstractIntegrationTest {
             });
         }
         return Arrays.asList(new Object[][]{
+                {"6.7.1"},
+                {"6.6.1"},
+                {"6.5.1"},
+                {"6.4.1"},
+                {"6.3"},
+                {"6.2.2"},
+                {"6.1.1"},
                 {"6.0.1"},
                 {"5.6.4"},
                 {"5.5.1"},
@@ -60,7 +67,6 @@ public abstract class AbstractIntegrationTest {
                 .withProjectDir(tempExampleFile)
                 .withArguments(task, "--stacktrace", "-i")
                 .withPluginClasspath()
-                .withDebug(true)
                 .forwardOutput();
 
         if (System.getProperty("eu.xenit.gradle.integration.useGradleVersion") == null) {
