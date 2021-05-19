@@ -1,6 +1,10 @@
 name: CI
 on:
   push:
+    branches:
+      - master
+    tags:
+      - v*
   pull_request:
   schedule:
     - cron: '0 0 * * 1'
@@ -17,6 +21,7 @@ jobs:
       - name: Check
         run: ./gradlew check
       - name: Upload analysis to sonarcloud
+        if: "${{ env.SONAR_TOKEN != '' }}"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
