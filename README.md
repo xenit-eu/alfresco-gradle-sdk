@@ -3,6 +3,13 @@
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/eu/xenit/alfresco/eu.xenit.alfresco.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=eu.xenit.alfresco)](https://plugins.gradle.org/plugin/eu.xenit.alfresco)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/eu/xenit/amp/eu.xenit.amp.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=eu.xenit.amp)](https://plugins.gradle.org/plugin/eu.xenit.amp)
 
+> [![Xenit Logo](https://xenit.eu/wp-content/uploads/2017/09/XeniT_Website_Logo.png)](https://xenit.eu/open-source)
+>
+> The Alfresco Gradle SDK is a part of the Xenit Open Source Tooling around Alfresco. Xenit is company with a deep expertise 
+> and a strong team around Alfresco. If you'd like to learn more about our 
+> [tools](https://xenit.eu/open-source), [services](https://xenit.eu/alfresco) and 
+> [products](https://xenit.eu/alfresco-products), please visit our [website](https://xenit.eu).
+
 Gradle plugins and tasks to support Alfresco development.
 Gradle 5.1 and above are supported.
 
