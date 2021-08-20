@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## Version 1.1.0 - 2021-08-20
+
 ### New features
 
  * [#49](https://github.com/xenit-eu/alfresco-gradle-sdk/pull/49) `alfrescoEnterprise()` Gradle repository
