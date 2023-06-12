@@ -36,7 +36,7 @@ configurations {
 dependencies {
     compile gradleApi()
     testCompile group: 'junit', name: 'junit', version: '4.13.2'
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.13.0'
 }
 import org.gradle.util.GradleVersion
 
