@@ -2,7 +2,7 @@ plugins {
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.21.0"
     id 'org.ajoberstar.reckon' version "0.13.2"
-    id 'org.sonarqube' version '4.2.0.3129'
+    id 'org.sonarqube' version '4.3.1.3277'
     id 'be.vbgn.ci-detect' version '0.5.0'
     id 'be.vbgn.dev-conventions' version '0.5.3'
     id 'jacoco'
