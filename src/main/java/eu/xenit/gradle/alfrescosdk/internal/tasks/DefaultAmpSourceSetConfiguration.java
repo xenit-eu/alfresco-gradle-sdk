@@ -1,5 +1,6 @@
 package eu.xenit.gradle.alfrescosdk.internal.tasks;
 
+import eu.xenit.gradle.alfrescosdk.internal.PropertiesUtil;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
@@ -13,7 +14,6 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.util.GUtil;
 
 public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfiguration {
 
@@ -60,7 +60,7 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     @Override
     public AmpSourceSetConfiguration module(File moduleProperties) {
         return module(properties -> {
-            properties.putAll(GUtil.loadProperties(moduleProperties));
+            properties.putAll(PropertiesUtil.loadProperties(moduleProperties));
         });
     }
 
@@ -87,7 +87,7 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     @Override
     public AmpSourceSetConfiguration fileMapping(File fileMappingProperties) {
         return fileMapping(properties -> {
-            properties.putAll(GUtil.loadProperties(fileMappingProperties));
+            properties.putAll(PropertiesUtil.loadProperties(fileMappingProperties));
         });
     }
 
@@ -125,4 +125,5 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     public SourceDirectorySet getWeb() {
         return web;
     }
+
 }

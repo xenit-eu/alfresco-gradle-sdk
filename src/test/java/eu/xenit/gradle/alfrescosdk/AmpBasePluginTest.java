@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import eu.xenit.gradle.alfrescosdk.internal.PropertiesUtil;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
@@ -19,7 +20,6 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.WriteProperties;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.gradle.util.GUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -95,12 +95,12 @@ public class AmpBasePluginTest {
         Properties moduleProperties = new Properties();
         moduleProperties.setProperty("module.id", "test-amp");
         moduleProperties.setProperty("module.version", "1.0.0");
-        GUtil.saveProperties(moduleProperties, modulePropertiesFile);
+        PropertiesUtil.saveProperties(moduleProperties, modulePropertiesFile);
 
         File fileMappingPropertiesFile = ampFolder.resolve("file-mapping.properties").toFile();
         Properties fileMappingProperties = new Properties();
         fileMappingProperties.setProperty("/override", "/");
-        GUtil.saveProperties(fileMappingProperties, fileMappingPropertiesFile);
+        PropertiesUtil.saveProperties(fileMappingProperties, fileMappingPropertiesFile);
 
         DefaultProject project = getDefaultProject();
         // Java plugin is required for the jar task
