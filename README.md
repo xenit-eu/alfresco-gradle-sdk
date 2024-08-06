@@ -11,7 +11,7 @@
 > [products](https://xenit.eu/alfresco-products), please visit our [website](https://xenit.eu).
 
 Gradle plugins and tasks to support Alfresco development.
-Gradle 5.1 and above are supported.
+Gradle 7.1 and above are supported.
 
 ## Usage
 
