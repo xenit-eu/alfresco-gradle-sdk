@@ -39,7 +39,7 @@ configurations {
 dependencies {
     implementation gradleApi()
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'commons-io', name: 'commons-io', version: '2.13.0'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
 }
 import org.gradle.util.GradleVersion
 
