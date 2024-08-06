@@ -1,7 +1,6 @@
 plugins {
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.21.0"
-    id 'org.ajoberstar.reckon' version "0.13.2"
     id 'org.sonarqube' version '4.3.1.3277'
     id 'be.vbgn.ci-detect' version '0.5.0'
     id 'be.vbgn.dev-conventions' version '0.5.3'
@@ -12,7 +11,11 @@ plugins {
 
 group 'eu.xenit.gradle'
 
-sourceCompatibility = 1.8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -29,14 +32,14 @@ sourceSets {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestCompileClasspath.extendsFrom testCompileClasspath
+    integrationTestRuntimeClasspath.extendsFrom testRuntimeClasspath
 }
 
 dependencies {
-    compile gradleApi()
-    testCompile group: 'junit', name: 'junit', version: '4.13.2'
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.13.0'
+    implementation gradleApi()
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.13.0'
 }
 import org.gradle.util.GradleVersion
 
@@ -103,9 +106,3 @@ pluginBundle {
     }
 }
 
-reckon {
-    scopeFromProp()
-    snapshotFromProp()
-}
-
-reckonTagCreate.dependsOn(check)

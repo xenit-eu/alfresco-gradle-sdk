@@ -1,5 +1,7 @@
 package eu.xenit.gradle.alfrescosdk.internal.tasks;
 
+import eu.xenit.gradle.alfrescosdk.internal.PropertiesUtil;
+import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import java.util.Collections;
@@ -11,10 +13,11 @@ import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.util.GUtil;
+import org.gradle.api.tasks.SourceSet;
 
 public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfiguration {
 
+    private final SourceSet sourceSet;
     private final SourceDirectorySet config;
     private final SourceDirectorySet web;
     private final Project project;
@@ -22,8 +25,9 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     private final MapProperty<String, String> fileMappingProperties;
     private final Property<Boolean> dynamicExtension;
 
-    public DefaultAmpSourceSetConfiguration(Project project) {
+    public DefaultAmpSourceSetConfiguration(Project project, SourceSet sourceSet) {
         this.project = project;
+        this.sourceSet = sourceSet;
 
         // Creates config sourceDir set.
         config = project.getObjects().sourceDirectorySet("config", "Alfresco AMP configuration");
@@ -43,6 +47,11 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     }
 
     @Override
+    public AmpSourceSet getSourceSet() {
+        return new DefaultAmpSourceSet(sourceSet);
+    }
+
+    @Override
     public AmpSourceSetConfiguration module(String moduleProperties) {
         module(project.file(moduleProperties));
         return this;
@@ -51,7 +60,7 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     @Override
     public AmpSourceSetConfiguration module(File moduleProperties) {
         return module(properties -> {
-            properties.putAll(GUtil.loadProperties(moduleProperties));
+            properties.putAll(PropertiesUtil.loadProperties(moduleProperties));
         });
     }
 
@@ -78,7 +87,7 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     @Override
     public AmpSourceSetConfiguration fileMapping(File fileMappingProperties) {
         return fileMapping(properties -> {
-            properties.putAll(GUtil.loadProperties(fileMappingProperties));
+            properties.putAll(PropertiesUtil.loadProperties(fileMappingProperties));
         });
     }
 
@@ -116,4 +125,5 @@ public class DefaultAmpSourceSetConfiguration implements AmpSourceSetConfigurati
     public SourceDirectorySet getWeb() {
         return web;
     }
+
 }

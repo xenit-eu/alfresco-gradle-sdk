@@ -6,6 +6,6 @@ group = 'eu.xenit.gradle.alfrescosdk.test'
 
 task amp(type: eu.xenit.gradle.alfrescosdk.tasks.Amp){
     moduleProperties = file('module.properties');
-    destinationDir = file("$buildDir/amp")
-    baseName = 'amp'
+    destinationDirectory = file("$buildDir/amp")
+    archiveBaseName = 'amp'
 }

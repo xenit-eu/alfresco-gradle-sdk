@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 1.2.0 - 2024-08-07
+
+* [#100](https://github.com/xenit-eu/alfresco-gradle-sdk/pull/100) Support for Gradle 8
+
+> [!warning]
+> This release drops support for Gradle versions <7.1 and Java <11
+
 ## Version 1.1.0 - 2021-08-20
 
 ### New features

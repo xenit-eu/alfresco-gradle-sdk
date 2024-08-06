@@ -1,16 +1,12 @@
 package eu.xenit.gradle.alfrescosdk;
 
-import eu.xenit.gradle.alfrescosdk.internal.ConfigurationDispatcher;
 import eu.xenit.gradle.alfrescosdk.internal.GradleVersionCheck;
 import eu.xenit.gradle.alfrescosdk.internal.tasks.DefaultAmpSourceSet;
+import eu.xenit.gradle.alfrescosdk.internal.tasks.DefaultAmpSourceSetConfiguration;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
-import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
@@ -20,7 +16,7 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -34,13 +30,7 @@ public class AmpBasePlugin implements Plugin<Project> {
     public static final Logger LOGGER = Logging.getLogger(AmpBasePlugin.class);
     public static final String PLUGIN_ID = "eu.xenit.amp-base";
 
-    private final ConfigurationDispatcher<DefaultAmpSourceSet> sourceSetConfigurationDispatcher;
     private Project project;
-
-    @Inject
-    public AmpBasePlugin() {
-        sourceSetConfigurationDispatcher = new ConfigurationDispatcher<>();
-    }
 
     @Override
     public void apply(Project target) {
@@ -48,39 +38,31 @@ public class AmpBasePlugin implements Plugin<Project> {
         project = target;
         project.getPluginManager().apply(JavaBasePlugin.class);
         configureSourceSetDefaults();
-
     }
-
-    private static Map<String, Object> propertiesToMap(Properties properties) {
-        return properties.keySet()
-                .stream()
-                .collect(Collectors.toMap(Object::toString, k -> properties.get(k).toString()));
-    }
-
 
     private void configureSourceSetDefaults() {
-        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
-            DefaultAmpSourceSet ampSourceSet = new DefaultAmpSourceSet(sourceSet, project,
-                    sourceSetConfigurationDispatcher);
-            new DslObject(sourceSet).getConvention().getPlugins().put("amp", ampSourceSet);
-            String rootDir = "src/" + ampSourceSet.getName() + "/amp";
+        project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
+            var ampSourceSetConfig = (DefaultAmpSourceSetConfiguration)new DslObject(sourceSet).getExtensions()
+                    .create(AmpSourceSetConfiguration.class, "amp", DefaultAmpSourceSetConfiguration.class, project, sourceSet);
+            var ampSourceSet = new DefaultAmpSourceSet(sourceSet);
+            String rootDir = "src/" + sourceSet.getName() + "/amp";
 
             //add default config sourceDir
-            ampSourceSet.getAmp().getConfig().srcDir(rootDir + "/config");
+            ampSourceSetConfig.getConfig().srcDir(rootDir + "/config");
 
             //add default web sourceDir
-            ampSourceSet.getAmp().getWeb().srcDir(rootDir + "/web");
+            ampSourceSetConfig.getWeb().srcDir(rootDir + "/web");
 
             //add module.properties
             File moduleProperties = project.file(rootDir + "/module.properties");
 
             if (moduleProperties.exists()) {
-                ampSourceSet.getAmp().module(moduleProperties);
+                ampSourceSetConfig.module(moduleProperties);
             } else {
-                ampSourceSet.getAmp().module(properties -> {
+                ampSourceSetConfig.module(properties -> {
                     LOGGER.info(
                             "{} does not exist for configured amp sourceset {}. A module.properties file is configured automatically from the project",
-                            moduleProperties, ampSourceSet.getName());
+                            moduleProperties, sourceSet.getName());
                     String moduleId = project.getGroup().toString();
                     if (!moduleId.isEmpty()) {
                         moduleId += ".";
@@ -100,18 +82,17 @@ public class AmpBasePlugin implements Plugin<Project> {
             }
             File fileMappingProperties = project.file(rootDir + "/file-mapping.properties");
             if (fileMappingProperties.exists()) {
-                ampSourceSet.getAmp().fileMapping(fileMappingProperties);
+                ampSourceSetConfig.fileMapping(fileMappingProperties);
             }
 
+            createWritePropertiesTask(ampSourceSet.getModulePropertiesTaskName(), ampSourceSet.getName(),
+                    "module.properties", ampSourceSetConfig.getModuleProperties());
+            createWritePropertiesTask(ampSourceSet.getFileMappingPropertiesTaskName(), ampSourceSet.getName(),
+                    "file-mapping.properties", ampSourceSetConfig.getFileMappingProperties());
+            createAmpTask(project, ampSourceSet, ampSourceSetConfig);
+
         });
 
-        sourceSetConfigurationDispatcher.add(ampSourceSet -> {
-            createWritePropertiesTask(ampSourceSet.getModulePropertiesTaskName(), ampSourceSet.getName(),
-                    "module.properties", ampSourceSet.getAmp().getModuleProperties());
-            createWritePropertiesTask(ampSourceSet.getFileMappingPropertiesTaskName(), ampSourceSet.getName(),
-                    "file-mapping.properties", ampSourceSet.getAmp().getFileMappingProperties());
-            createAmpTask(project, ampSourceSet);
-        });
     }
 
     private Provider<WriteProperties> createWritePropertiesTask(String taskName, String sourceSetName, String fileName,
@@ -123,7 +104,7 @@ public class AmpBasePlugin implements Plugin<Project> {
         });
     }
 
-    private TaskProvider<Amp> createAmpTask(Project project, DefaultAmpSourceSet ampSourceSet) {
+    private TaskProvider<Amp> createAmpTask(Project project, DefaultAmpSourceSet ampSourceSet, DefaultAmpSourceSetConfiguration ampSourceSetConfig) {
         return project.getTasks().register(ampSourceSet.getAmpTaskName(), Amp.class, amp -> {
             amp.setModuleProperties(
                     () -> project.getTasks().getByName(ampSourceSet.getModulePropertiesTaskName()).getOutputs()
@@ -137,13 +118,13 @@ public class AmpBasePlugin implements Plugin<Project> {
                         return fileMappingTask.getOutputs().getFiles().getSingleFile();
                     });
             amp.web(copySpec -> {
-                copySpec.from(ampSourceSet.getAmp().getWeb());
+                copySpec.from(ampSourceSetConfig.getWeb());
             });
             amp.config(copySpec -> {
-                copySpec.from(ampSourceSet.getAmp().getConfig());
+                copySpec.from(ampSourceSetConfig.getConfig());
             });
 
-            Provider<Boolean> dynamicExtension = ampSourceSet.getAmp().getDynamicExtension();
+            Provider<Boolean> dynamicExtension = ampSourceSetConfig.getDynamicExtension();
             Provider<Configuration> ampLibrariesConfiguration = project.getConfigurations()
                     .named(ampSourceSet.getAmpLibrariesConfigurationName());
             Provider<FileCollection> jarOutputs = project.getTasks().named(ampSourceSet.getJarTaskName())
@@ -161,30 +142,35 @@ public class AmpBasePlugin implements Plugin<Project> {
             );
             amp.setGroup(LifecycleBasePlugin.BUILD_GROUP);
             if (!ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
-                amp.setClassifier(ampSourceSet.getName());
+                amp.getArchiveClassifier().set(ampSourceSet.getName());
             }
         });
     }
 
-    public void allAmpSourceSets(Action<? super AmpSourceSet> configure) {
-        sourceSetConfigurationDispatcher.add(configure);
+    public void allAmpSourceSetConfigurations(Action<? super AmpSourceSetConfiguration> configure) {
+        project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
+            var config = new DslObject(sourceSet).getExtensions().getByType(AmpSourceSetConfiguration.class);
+            if (config != null) {
+                configure.execute(config);
+            }
+        });
     }
 
-    void configureAmpSourceSet(String sourceSetName, Action<? super AmpSourceSetConfiguration> configure) {
+    void configureAmpSourceSetConfiguration(String sourceSetName, Action<? super AmpSourceSetConfiguration> configure) {
         getSourceSet(sourceSetName)
                 .configure(sourceSet -> {
-                    AmpSourceSet ampSourceSet = new DslObject(sourceSet).getConvention().getPlugin(AmpSourceSet.class);
-                    ampSourceSet.amp(configure);
+                    AmpSourceSetConfiguration ampSourceSet = new DslObject(sourceSet).getExtensions().getByType(AmpSourceSetConfiguration.class);
+                    configure.execute(ampSourceSet);
                 });
     }
 
-    Provider<AmpSourceSet> getAmpSourceSet(String sourceSetName) {
+    Provider<AmpSourceSetConfiguration> getAmpSourceSetConfiguration(String sourceSetName) {
         return getSourceSet(sourceSetName)
-                .map(sourceSet -> new DslObject(sourceSet).getConvention().getPlugin(AmpSourceSet.class));
+                .map(sourceSet -> new DslObject(sourceSet).getExtensions().getByType(AmpSourceSetConfiguration.class));
     }
 
     private NamedDomainObjectProvider<SourceSet> getSourceSet(String sourceSetName) {
-        SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+        SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
         if (!sourceSets.getNames().contains(sourceSetName)) {
             return sourceSets.register(sourceSetName);
         } else {

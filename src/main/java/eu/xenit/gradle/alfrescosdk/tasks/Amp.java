@@ -2,7 +2,6 @@ package eu.xenit.gradle.alfrescosdk.tasks;
 
 import static eu.xenit.gradle.alfrescosdk.internal.DeprecationHelper.warnDeprecationOnce;
 
-import groovy.lang.Closure;
 import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
@@ -20,7 +19,6 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.bundling.Zip;
-import org.gradle.util.ConfigureUtil;
 
 /**
  * Assembles an AMP archive.
@@ -313,51 +311,6 @@ public class Amp extends Zip {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Groovy closure support">
-    /**
-     * @param web supplier of the directory that will be copied to the {@code /web} directory
-     * @deprecated since 0.2.0, use {@link #web(Action)} instead.
-     */
-    @Deprecated
-    public void setWeb(Closure<File> web) {
-        setWeb(web::call);
-    }
-
-    /**
-     * @param config supplier of the directory that will be copied to the {@code /config} directory
-     * @deprecated since 0.2.0, use {@link #config(Action)} instead
-     */
-    @Deprecated
-    public void setConfig(Closure<File> config) {
-        setConfig(config::call);
-    }
-
-    /**
-     * @param moduleProperties supplier of the file that will be copied to {@code /module.properties}
-     * @see #setModuleProperties(Supplier)
-     */
-    public void setModuleProperties(Closure<File> moduleProperties) {
-        setModuleProperties(moduleProperties::call);
-    }
-
-    /**
-     * @param fileMappingProperties supplier of the file that will be copied to {@code /file-mapping.properties}
-     * @see #setFileMappingProperties(Supplier)
-     */
-    public void setFileMappingProperties(Closure<File> fileMappingProperties) {
-        setFileMappingProperties(fileMappingProperties::call);
-    }
-
-    /**
-     * @see #de(Action)
-     * @param configureClosure action that configures the {@link CopySpec} for {@code /config/dynamic-extensions/bundles}
-     * @deprecated since 0.2.0. Use {@link #getDeBundles()} or {@link #setDeBundles(FileCollection)} instead.
-     */
-    @Deprecated
-    public void de(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getDe());
-    }
-    //</editor-fold>
 
     //<editor-fold desc="Deprecation support helpers">
     private Supplier<Supplier<File>> _web = () -> web;

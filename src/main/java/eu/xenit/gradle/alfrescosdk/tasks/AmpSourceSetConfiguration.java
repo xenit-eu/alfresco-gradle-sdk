@@ -1,16 +1,15 @@
 package eu.xenit.gradle.alfrescosdk.tasks;
 
-import groovy.lang.Closure;
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.util.ConfigureUtil;
 
 @NonNullApi
 public interface AmpSourceSetConfiguration {
+    AmpSourceSet getSourceSet();
 
     AmpSourceSetConfiguration module(String moduleProperties);
 
@@ -34,11 +33,6 @@ public interface AmpSourceSetConfiguration {
 
     SourceDirectorySet getConfig();
 
-    default AmpSourceSetConfiguration config(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getConfig());
-        return this;
-    }
-
     default AmpSourceSetConfiguration config(Action<? super SourceDirectorySet> configure) {
         configure.execute(getConfig());
         return this;
@@ -46,12 +40,6 @@ public interface AmpSourceSetConfiguration {
 
 
     SourceDirectorySet getWeb();
-
-    default AmpSourceSetConfiguration web(Closure configureClosure) {
-        ConfigureUtil.configure(configureClosure, getWeb());
-        return this;
-    }
-
 
     default AmpSourceSetConfiguration web(Action<? super SourceDirectorySet> configure) {
         configure.execute(getWeb());

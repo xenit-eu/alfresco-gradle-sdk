@@ -49,7 +49,7 @@ public class AlfrescoPluginTest {
     public void alfrescoProvidedSourceSetWithoutMain() {
         DefaultProject project = getDefaultProject();
         AmpBasePlugin ampBasePlugin = project.getPlugins().apply(AmpBasePlugin.class);
-        ampBasePlugin.configureAmpSourceSet("share", s -> {});
+        ampBasePlugin.configureAmpSourceSetConfiguration("share", s -> {});
 
         ConfigurableFileCollection test123JarCollection = project.files(this.getClass().getClassLoader().getResource("test123.jar").getFile());
         File test123Jar = test123JarCollection.getSingleFile();
@@ -71,8 +71,8 @@ public class AlfrescoPluginTest {
     public void alfrescoProvidedSourceSetWithMain() {
         DefaultProject project = getDefaultProject();
         AmpBasePlugin ampBasePlugin = project.getPlugins().apply(AmpBasePlugin.class);
-        ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
-        ampBasePlugin.configureAmpSourceSet("share", s -> {});
+        ampBasePlugin.configureAmpSourceSetConfiguration(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
+        ampBasePlugin.configureAmpSourceSetConfiguration("share", s -> {});
 
         assertTrue(project.getConfigurations().getNames().contains(ALFRESCO_PROVIDED));
         assertTrue(project.getConfigurations().getNames().contains("shareAlfrescoProvided"));
