@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
-import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
 import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import java.io.IOException;
