@@ -2,12 +2,10 @@ package eu.xenit.gradle.alfrescosdk;
 
 import eu.xenit.gradle.alfrescosdk.internal.GradleVersionCheck;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
-import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSet;
+import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.tasks.Jar;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -33,9 +31,10 @@ public class AmpPlugin implements Plugin<Project> {
 
         project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
             // Automatically configure main sourceset for amps
-            ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
-            ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
-                configureJarTask(project, ampSourceSet);
+            ampBasePlugin.configureAmpSourceSetConfiguration(SourceSet.MAIN_SOURCE_SET_NAME, s -> {});
+            ampBasePlugin.allAmpSourceSetConfigurations(ampSourceSetConfig -> {
+                var ampSourceSet = ampSourceSetConfig.getSourceSet();
+                configureJarTask(project, ampSourceSetConfig);
                 TaskProvider<Amp> ampTask = project.getTasks().withType(Amp.class).named(ampSourceSet.getAmpTaskName());
 
                 // Configure amp artifact
@@ -47,23 +46,21 @@ public class AmpPlugin implements Plugin<Project> {
                 });
 
                 project.getPlugins().withType(IdeaPlugin.class, ideaPlugin -> {
-                    ideaPlugin.getModel().getModule().getResourceDirs().addAll(ampSourceSet.getAmp().getConfig().getSrcDirs());
+                    ideaPlugin.getModel().getModule().getResourceDirs().addAll(ampSourceSetConfig.getConfig().getSrcDirs());
                 });
             });
         });
     }
 
-    @SuppressWarnings("unchecked")
-    private TaskProvider<Jar> configureJarTask(Project project, AmpSourceSet ampSourceSet) {
-        SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
-        SourceSet sourceSet = sourceSets.getByName(ampSourceSet.getName());
+    private TaskProvider<Jar> configureJarTask(Project project, AmpSourceSetConfiguration ampSourceSetConfig) {
+        SourceSet sourceSet = ampSourceSetConfig.getSourceSet().getSourceSet();
         if(project.getTasks().getNames().contains(sourceSet.getJarTaskName())) {
-            return (TaskProvider) project.getTasks().named(sourceSet.getJarTaskName());
+            return project.getTasks().named(sourceSet.getJarTaskName(), Jar.class);
         }
         return project.getTasks().register(sourceSet.getJarTaskName(), Jar.class, jar -> {
             jar.setGroup(LifecycleBasePlugin.BUILD_GROUP);
             jar.from(sourceSet.getOutput());
-            jar.setClassifier(sourceSet.getName());
+            jar.getArchiveClassifier().convention(sourceSet.getName());
             jar.dependsOn(sourceSet.getClassesTaskName());
         });
     }

@@ -4,7 +4,6 @@ import static eu.xenit.gradle.alfrescosdk.AmpPlugin.AMP_EXTENSION;
 
 import eu.xenit.gradle.alfrescosdk.config.AmpConfig;
 import eu.xenit.gradle.alfrescosdk.tasks.Amp;
-import eu.xenit.gradle.alfrescosdk.tasks.AmpSourceSetConfiguration;
 import java.io.File;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -19,13 +18,13 @@ public class AmpLegacyPlugin implements Plugin<Project> {
         project.getPlugins().apply(JavaPlugin.class); // Applying the java plugin ensures that the main source set is created
 
         project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
-            ampBasePlugin.configureAmpSourceSet(SourceSet.MAIN_SOURCE_SET_NAME, ampSourceSetConfiguration ->  {
+            ampBasePlugin.configureAmpSourceSetConfiguration(SourceSet.MAIN_SOURCE_SET_NAME, ampSourceSetConfiguration ->  {
                 project.getExtensions().create(AMP_EXTENSION, AmpConfig.class, project, ampSourceSetConfiguration);
             });
-            ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
+            ampBasePlugin.allAmpSourceSetConfigurations(ampSourceSetConfiguration -> {
+                var ampSourceSet = ampSourceSetConfiguration.getSourceSet();
                 if(ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
                     TaskProvider<Task> ampProvider = project.getTasks().named(ampSourceSet.getAmpTaskName());
-                    AmpSourceSetConfiguration ampSourceSetConfiguration = ampSourceSet.getAmp();
                     if(ampSourceSetConfiguration.getWeb().getSrcDirs().size() == 1) {
                         ampProvider.configure(amp -> {
                             ((Amp)amp)._setWeb(() -> ampSourceSetConfiguration.getWeb().getSrcDirs().iterator().next());

@@ -7,10 +7,12 @@ import java.util.Properties;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.util.ConfigureUtil;
 
 @NonNullApi
 public interface AmpSourceSetConfiguration {
+    AmpSourceSet getSourceSet();
 
     AmpSourceSetConfiguration module(String moduleProperties);
 

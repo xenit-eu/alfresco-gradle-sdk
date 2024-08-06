@@ -5,6 +5,7 @@ plugins {
 
 version = "0.0.1"
 
+def pr = project
 sourceSets {
     main {
         amp {
@@ -17,8 +18,10 @@ sourceSets {
     share {
         amp {
             module {
-                it.setProperty("module.id", "${project.name}-share")
-                it.setProperty("module.version", project.version)
+                // WARNING: when using the closure, using variables from an outside, implicit scope is not possible.
+                // they must be explicitly assigned to a variable before using them
+                it.setProperty("module.id", pr.name+"-share")
+                it.setProperty("module.version", pr.version)
             }
         }
     }

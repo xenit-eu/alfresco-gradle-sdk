@@ -11,6 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Predicate;
 import org.gradle.util.GUtil;
@@ -58,6 +59,9 @@ public class Examples extends AbstractIntegrationTest {
         // Gradle 5.1 has problems with memory usage with the bnd plugin
         Assume.assumeTrue("Gradle version >= 5.2",
                 GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("5.2")) >= 0);
+        // Gradle 8 is not supported by the DE plugin
+        Assume.assumeTrue("Gradle version < 8",
+                GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("8.0")) < 0);
         testProjectFolder(EXAMPLES.resolve("legacy-de-project"));
 
         Path buildFolder = projectFolder.toPath().resolve("build");
@@ -87,6 +91,9 @@ public class Examples extends AbstractIntegrationTest {
         // Gradle 5.1 has problems with memory usage with the bnd plugin
         Assume.assumeTrue("Gradle version >= 5.2",
                 GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("5.2")) >= 0);
+        // Gradle 8 is not supported by the DE plugin
+        Assume.assumeTrue("Gradle version < 8",
+                GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("8.0")) < 0);
         testProjectFolder(EXAMPLES.resolve("simple-de-project"));
 
         Path buildFolder = projectFolder.toPath().resolve("build");

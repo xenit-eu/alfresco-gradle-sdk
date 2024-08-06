@@ -8,7 +8,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
@@ -29,9 +29,9 @@ public class AlfrescoPlugin implements Plugin<Project> {
         configureRepository();
 
         project.getPlugins().withType(JavaBasePlugin.class, javaBasePlugin -> {
-            SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+            SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
 
-            /**
+            /*
              * Adds the sourceSets to the default main SourceSet.
              */
             sourceSets.all(sourceSet -> {
@@ -51,13 +51,12 @@ public class AlfrescoPlugin implements Plugin<Project> {
 
             // Configure other amp sourcesets with an alfrescoProvided configuration
             project.getPlugins().withType(AmpBasePlugin.class, ampBasePlugin -> {
-                ampBasePlugin.allAmpSourceSets(ampSourceSet -> {
-                    if(ampSourceSet.getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
+                ampBasePlugin.allAmpSourceSetConfigurations(ampSourceSetConfig -> {
+                    if(ampSourceSetConfig.getSourceSet().getName().equals(SourceSet.MAIN_SOURCE_SET_NAME)) {
                         // Main sourceset is already configured above, do not configure it again
                         return;
                     }
-                    SourceSet sourceSet = sourceSets.getByName(ampSourceSet.getName());
-                    registerAlfrescoProvided(sourceSet);
+                    registerAlfrescoProvided(ampSourceSetConfig.getSourceSet().getSourceSet());
                 });
             });
         });
@@ -67,9 +66,9 @@ public class AlfrescoPlugin implements Plugin<Project> {
     private NamedDomainObjectProvider<Configuration> registerAlfrescoProvided(SourceSet sourceSet) {
         String alfrescoProvidedName = sourceSet.getTaskName(null, ALFRESCO_PROVIDED);
         NamedDomainObjectProvider<Configuration> alfrescoProvided = project.getConfigurations().register(alfrescoProvidedName);
-        project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName())
-                .configure(compileOnly -> {
-                    compileOnly.extendsFrom(alfrescoProvided.get());
+        project.getConfigurations().named(sourceSet.getCompileClasspathConfigurationName())
+                .configure(compileClasspath -> {
+                    compileClasspath.extendsFrom(alfrescoProvided.get());
                 });
         return alfrescoProvided;
     }
